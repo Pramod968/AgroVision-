@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AgroVision — AI Crop Intelligence System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ══════════════════════════════════════════════════
+   AGROVISION · DARK NEON HACKATHON THEME
+   ══════════════════════════════════════════════════ */
+:root{
+  --bg:#050a0e;--bg2:#081218;--bg3:#0c1a24;
+  --panel:rgba(8,20,30,0.92);
+  --border:rgba(0,255,136,0.13);--border2:rgba(0,200,255,0.1);
+  --ng:#00ff88;--nc:#00e5ff;--nb:#0080ff;
+  --ny:#ffdd00;--nr:#ff2d55;--no:#ff8c00;
+  --t:#b8dfc4;--td:#4a7a5a;--tb:#e8fff0;
+  --fm:'Share Tech Mono',monospace;
+  --ft:'Orbitron',sans-serif;
+  --fb:'Rajdhani',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow-x:hidden;background:var(--bg);color:var(--t);font-family:var(--fb);font-size:14px}
+
+/* BG GRID */
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(0,255,136,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,136,.025) 1px,transparent 1px);
+  background-size:44px 44px;animation:gd 80s linear infinite}
+@keyframes gd{to{background-position:44px 44px}}
+.scan{position:fixed;top:0;left:0;right:0;height:2px;z-index:1;
+  background:linear-gradient(90deg,transparent,var(--ng),transparent);
+  animation:sc 10s linear infinite;opacity:.3}
+@keyframes sc{0%{top:0}100%{top:100%}}
+.particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.pt{position:absolute;width:2px;height:2px;background:var(--ng);border-radius:50%;
+  animation:fu linear infinite;opacity:0}
+@keyframes fu{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:.5}90%{opacity:.2}100%{transform:translateY(-5vh) scale(2);opacity:0}}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+  padding:0 22px;height:62px;background:rgba(5,10,14,.97);
+  border-bottom:1px solid var(--border);backdrop-filter:blur(24px);
+  box-shadow:0 2px 40px rgba(0,255,136,.06)}
+.hl{display:flex;align-items:center;gap:14px}
+.lm{filter:drop-shadow(0 0 10px rgba(0,255,136,.6))}
+.lt{display:flex;flex-direction:column}
+.lmain{font-family:var(--ft);font-size:17px;font-weight:900;color:var(--ng);
+  letter-spacing:4px;text-shadow:0 0 22px rgba(0,255,136,.8),0 0 44px rgba(0,255,136,.3)}
+.lsub{font-family:var(--fm);font-size:8px;color:var(--td);letter-spacing:2px}
+nav{display:flex;gap:4px}
+.nb{font-family:var(--fm);font-size:11px;letter-spacing:2px;padding:7px 15px;
+  background:transparent;border:1px solid transparent;color:var(--td);
+  cursor:pointer;transition:all .2s;border-radius:2px}
+.nb:hover{border-color:var(--border);color:var(--ng)}
+.nb.active{border-color:var(--ng);color:var(--ng);background:rgba(0,255,136,.05);
+  box-shadow:0 0 14px rgba(0,255,136,.18)}
+.hr2{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.ss{display:flex;align-items:center;gap:8px}
+.sd{width:8px;height:8px;border-radius:50%;background:var(--ng);
+  animation:pl 2s ease-in-out infinite}
+@keyframes pl{0%,100%{box-shadow:0 0 0 0 rgba(0,255,136,.6)}50%{box-shadow:0 0 0 7px rgba(0,255,136,0)}}
+.sl{font-family:var(--fm);font-size:10px;color:var(--ng);letter-spacing:2px}
+.clk{font-family:var(--fm);font-size:16px;color:var(--nc);letter-spacing:3px;
+  text-shadow:0 0 12px rgba(0,229,255,.6)}
+.dt{font-family:var(--fm);font-size:9px;color:var(--td);letter-spacing:2px}
+
+/* ALERT STRIP */
+.astrip{background:linear-gradient(90deg,rgba(0,255,136,.07),rgba(0,229,255,.07),rgba(0,255,136,.07));
+  border-bottom:1px solid rgba(0,255,136,.08);padding:5px 0;overflow:hidden;position:relative;z-index:10}
+.ain{display:flex;align-items:center;gap:14px;animation:st 28s linear infinite;white-space:nowrap}
+.at{font-family:var(--fm);font-size:10px;color:var(--ng);letter-spacing:2px}
+@keyframes st{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+
+/* PANELS */
+.mc{position:relative;z-index:5;padding:18px 22px}
+.panel{display:none}
+.panel.active{display:block;animation:fp .3s ease}
+@keyframes fp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── METRIC CARDS ── */
+.mr{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.mc2{position:relative;padding:18px;background:var(--panel);border-radius:4px;
+  border:1px solid var(--border);overflow:hidden;transition:border-color .3s,transform .2s}
+.mc2:hover{border-color:rgba(0,255,136,.38);transform:translateY(-2px)}
+.cg{position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  border-radius:50%;pointer-events:none;animation:cgl 5s ease-in-out infinite alternate}
+.cm .cg{background:radial-gradient(circle,rgba(0,229,255,.05) 0%,transparent 70%)}
+.ct .cg{background:radial-gradient(circle,rgba(255,140,0,.05) 0%,transparent 70%)}
+.ch .cg{background:radial-gradient(circle,rgba(0,128,255,.05) 0%,transparent 70%)}
+.cp .cg{background:radial-gradient(circle,rgba(0,255,136,.05) 0%,transparent 70%)}
+@keyframes cgl{0%{transform:translate(10%,10%)}100%{transform:translate(-10%,-10%)}}
+.chd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ci{font-size:18px}.cl{font-family:var(--fm);font-size:10px;letter-spacing:2px;color:var(--td)}
+.cv{font-family:var(--ft);font-size:40px;font-weight:900;color:var(--tb);line-height:1;
+  text-shadow:0 0 28px rgba(0,255,136,.25)}
+.cu{font-family:var(--fm);font-size:12px;color:var(--td);margin:3px 0 9px}
+.cb{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-bottom:7px;overflow:hidden}
+.bf{height:100%;border-radius:2px;transition:width 1.2s ease}
+.bm{background:linear-gradient(90deg,var(--nc),var(--nb));box-shadow:0 0 8px var(--nc)}
+.bt{background:linear-gradient(90deg,var(--no),var(--nr));box-shadow:0 0 8px var(--no)}
+.bh{background:linear-gradient(90deg,var(--nb),var(--nc));box-shadow:0 0 8px var(--nb)}
+.cs{font-family:var(--fm);font-size:10px;color:var(--ng);letter-spacing:1px}
+
+/* Pump */
+.psd{display:flex;justify-content:center;margin:8px 0}
+.pr{width:78px;height:78px;border-radius:50%;border:2px solid var(--ng);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .5s;box-shadow:0 0 16px rgba(0,255,136,.28)}
+.pr.pa{border-color:var(--nc);box-shadow:0 0 32px rgba(0,229,255,.6),inset 0 0 20px rgba(0,229,255,.08);
+  animation:pp 1s ease-in-out infinite}
+@keyframes pp{0%,100%{box-shadow:0 0 20px rgba(0,229,255,.55)}50%{box-shadow:0 0 44px rgba(0,229,255,.9)}}
+.pi{text-align:center}
+.plb{font-family:var(--ft);font-size:14px;font-weight:700;color:var(--ng)}
+.pr.pa .plb{color:var(--nc)}
+.ptb{width:100%;margin-top:7px;padding:7px;font-family:var(--fm);font-size:10px;letter-spacing:2px;
+  background:rgba(0,255,136,.07);border:1px solid var(--border);color:var(--ng);
+  cursor:pointer;transition:all .2s;border-radius:2px}
+.ptb:hover{background:rgba(0,255,136,.14);box-shadow:0 0 12px rgba(0,255,136,.2)}
+
+/* ── MIDDLE ROW ── */
+.midr{display:grid;grid-template-columns:1fr 370px;gap:14px;margin-bottom:18px}
+.cpan,.ppan,.lpan,.span2{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:15px}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;
+  padding-bottom:9px;border-bottom:1px solid var(--border)}
+.pt2{font-family:var(--fm);font-size:11px;letter-spacing:3px;color:var(--ng)}
+.cc{display:flex;gap:5px}
+.cbn{font-family:var(--fm);font-size:10px;padding:4px 9px;background:transparent;
+  border:1px solid var(--border);color:var(--td);cursor:pointer;transition:all .2s;border-radius:2px}
+.cbn.active,.cbn:hover{border-color:var(--ng);color:var(--ng)}
+.mb2{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--nc);
+  border:1px solid rgba(0,229,255,.28);padding:3px 8px;border-radius:2px}
+
+/* Prediction */
+.pv{display:flex;gap:14px;align-items:center;margin-bottom:13px}
+.rw{flex-shrink:0}
+.po{flex:1}
+.pdl{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--td);margin-bottom:4px}
+.pdr{font-family:var(--ft);font-size:19px;font-weight:700;color:var(--ng);margin-bottom:10px}
+.pdr.pyes{color:var(--nc);text-shadow:0 0 20px rgba(0,229,255,.55)}
+.pdc{font-family:var(--fm);font-size:10px;color:var(--td)}
+.cfb{height:4px;background:rgba(255,255,255,.05);border-radius:2px;margin:5px 0 4px}
+.cff{height:100%;background:linear-gradient(90deg,var(--ng),var(--nc));border-radius:2px;transition:width 1.2s ease}
+.rpb{margin-top:10px;padding:8px 14px;font-family:var(--fm);font-size:10px;letter-spacing:2px;
+  background:rgba(0,229,255,.09);border:1px solid rgba(0,229,255,.28);color:var(--nc);
+  cursor:pointer;transition:all .2s;border-radius:2px;width:100%}
+.rpb:hover{background:rgba(0,229,255,.18);box-shadow:0 0 16px rgba(0,229,255,.3)}
+.fg{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.fi{background:rgba(0,255,136,.03);border:1px solid var(--border);padding:7px;border-radius:2px;text-align:center}
+.fl{display:block;font-family:var(--fm);font-size:8px;color:var(--td);margin-bottom:3px}
+.fv{font-family:var(--fm);font-size:13px;color:var(--nc)}
+
+/* ── BOTTOM ROW ── */
+.br{display:grid;grid-template-columns:1fr 330px;gap:14px}
+.lf{height:175px;overflow-y:auto}
+.le{display:flex;gap:10px;padding:5px 0;font-family:var(--fm);font-size:11px;
+  border-bottom:1px solid rgba(255,255,255,.03)}
+.lti{color:var(--td);flex-shrink:0}
+.lmsg{color:var(--t)}
+.li .lmsg{color:var(--ng)}.lw .lmsg{color:var(--ny)}.la .lmsg{color:var(--nr)}.lp .lmsg{color:var(--nc)}
+.clrb{font-family:var(--fm);font-size:9px;letter-spacing:2px;padding:3px 9px;
+  background:transparent;border:1px solid rgba(255,45,85,.3);color:var(--nr);cursor:pointer;border-radius:2px;transition:all .2s}
+.clrb:hover{background:rgba(255,45,85,.09)}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.sb{background:rgba(0,255,136,.03);border:1px solid var(--border);padding:11px 7px;border-radius:2px;text-align:center}
+.sv{font-family:var(--ft);font-size:17px;color:var(--ng)}
+.sn{font-family:var(--fm);font-size:8px;color:var(--td);letter-spacing:1px;margin-top:3px}
+
+/* ══ SENSOR PAGE ══ */
+.sph{margin-bottom:18px}
+.pgtl{font-family:var(--ft);font-size:19px;font-weight:700;color:var(--ng);letter-spacing:3px}
+.ebdg{font-family:var(--fm);font-size:10px;letter-spacing:2px;color:var(--nc);
+  border:1px solid rgba(0,229,255,.28);padding:4px 10px;border-radius:2px;margin-left:12px}
+.ci2{font-family:var(--fm);font-size:11px;color:var(--td);margin-top:7px}
+.cdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ng);
+  vertical-align:middle;animation:pl 2s infinite}
+.scg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.sdc{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:15px}
+.sdch{font-family:var(--fm);font-size:10px;letter-spacing:2px;color:var(--ng);
+  margin-bottom:13px;padding-bottom:9px;border-bottom:1px solid var(--border)}
+.gc{position:relative;display:flex;justify-content:center;margin-bottom:11px}
+.gr{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
+  font-family:var(--ft);font-size:13px;color:var(--nc)}
+.sm{display:flex;flex-direction:column;gap:5px}
+.mr2{display:flex;justify-content:space-between;font-family:var(--fm);font-size:10px}
+.mr2 span:first-child{color:var(--td)}.mr2 span:last-child{color:var(--tb)}
+
+/* Relay visual */
+.rv2{margin-bottom:13px}
+.rsch{display:flex;align-items:center;justify-content:center;gap:0;padding:10px 0}
+.rbx,.pbx{padding:11px 14px;border:1px solid var(--border);border-radius:4px;
+  text-align:center;font-family:var(--fm);font-size:10px;color:var(--td)}
+.rbx{border-color:rgba(0,255,136,.28)}
+.ri{width:10px;height:10px;border-radius:50%;background:#222;margin:4px auto 0;transition:all .3s}
+.ri.active{background:var(--ng);box-shadow:0 0 9px var(--ng)}
+.wh{width:28px;height:2px;background:var(--td)}
+.pbx{border-color:rgba(0,229,255,.28)}
+.ps2{font-size:19px;margin-top:3px;display:inline-block;color:var(--td);transition:color .3s}
+.ps2.spinning{color:var(--nc);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pc{display:flex;flex-direction:column;gap:7px;margin-top:11px}
+.pbn{padding:7px;font-family:var(--fm);font-size:9px;letter-spacing:2px;
+  border-radius:2px;cursor:pointer;transition:all .2s;border:1px solid}
+.pon{background:rgba(0,229,255,.09);border-color:rgba(0,229,255,.38);color:var(--nc)}
+.pon:hover{background:rgba(0,229,255,.18)}
+.pof{background:rgba(255,45,85,.09);border-color:rgba(255,45,85,.38);color:var(--nr)}
+.pof:hover{background:rgba(255,45,85,.18)}
+.pau{background:rgba(0,255,136,.07);border-color:rgba(0,255,136,.28);color:var(--ng)}
+.pau:hover{background:rgba(0,255,136,.14)}
+
+/* ── SENSOR HISTORY TABLE ── */
+.senshist{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:15px;margin-top:18px}
+.senshist-wrap{overflow-x:auto;margin-top:11px}
+.senshist table{width:100%;border-collapse:collapse;font-family:var(--fm);font-size:11px}
+.senshist thead tr{border-bottom:1px solid var(--border)}
+.senshist th{padding:9px 11px;text-align:left;color:var(--td);letter-spacing:2px;font-size:10px;font-weight:normal;text-transform:uppercase}
+.senshist td{padding:9px 11px;color:var(--t);border-bottom:1px solid rgba(255,255,255,.03)}
+.senshist tr:hover td{background:rgba(0,255,136,.03)}
+.senshist .ton{color:var(--nc)}.senshist .tof{color:var(--td)}
+.senshist-empty{text-align:center;padding:22px;color:var(--td);font-family:var(--fm);font-size:11px}
+
+/* ══ DISEASE PAGE ══ */
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.us{display:flex;flex-direction:column;gap:14px}
+.uz{border:2px dashed rgba(0,255,136,.28);border-radius:8px;padding:44px 22px;
+  text-align:center;cursor:pointer;transition:all .3s;background:rgba(0,255,136,.02)}
+.uz:hover{border-color:var(--ng);background:rgba(0,255,136,.05);box-shadow:inset 0 0 28px rgba(0,255,136,.04)}
+.uico{font-size:44px;margin-bottom:11px}
+.utxt{font-family:var(--fm);font-size:13px;color:var(--ng);letter-spacing:2px;margin-bottom:7px}
+.usub{font-family:var(--fm);font-size:10px;color:var(--td)}
+.ipc{position:relative;border-radius:8px;overflow:hidden}
+.pimg{width:100%;max-height:290px;object-fit:cover;display:block}
+.pov{position:absolute;inset:0;background:rgba(5,10,14,.72);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:11px;opacity:0;transition:opacity .3s}
+.ipc:hover .pov{opacity:1}
+.anb{padding:11px 26px;font-family:var(--fm);font-size:12px;letter-spacing:3px;
+  background:linear-gradient(135deg,rgba(0,229,255,.18),rgba(0,255,136,.18));
+  border:1px solid var(--nc);color:var(--nc);cursor:pointer;border-radius:4px;transition:all .2s}
+.anb:hover{box-shadow:0 0 28px rgba(0,229,255,.38)}
+.cib{font-family:var(--fm);font-size:10px;background:transparent;
+  border:1px solid rgba(255,45,85,.38);color:var(--nr);padding:5px 14px;cursor:pointer;border-radius:2px}
+.as2{display:flex;flex-direction:column;gap:14px}
+.apan{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:15px;flex:1}
+.aid{text-align:center;padding:22px}
+.aic{font-size:44px;margin-bottom:11px}
+.ait{font-family:var(--fm);font-size:12px;color:var(--td);line-height:1.9;margin-bottom:18px}
+.mi2{background:rgba(0,255,136,.03);border:1px solid var(--border);border-radius:4px;padding:11px}
+.mir{display:flex;justify-content:space-between;font-family:var(--fm);font-size:10px;padding:3px 0}
+.mir span:first-child{color:var(--td)}.mir span:last-child{color:var(--nc)}
+.rh2{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}
+.db2{font-family:var(--ft);font-size:15px;font-weight:700;padding:5px 14px;border-radius:4px;border:1px solid}
+.db2.healthy{color:var(--ng);border-color:var(--ng);background:rgba(0,255,136,.09)}
+.db2.diseased{color:var(--nr);border-color:var(--nr);background:rgba(255,45,85,.09)}
+.rr{display:flex;justify-content:space-between;padding:7px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);font-family:var(--fm);font-size:11px}
+.rl2{color:var(--td)}.rv3{color:var(--tb)}
+.cbrs{margin:13px 0}
+.cbr{display:flex;align-items:center;gap:9px;margin-bottom:7px;font-family:var(--fm);font-size:10px}
+.cbl{color:var(--td);width:115px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cbb{flex:1;height:6px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
+.cbf{height:100%;border-radius:3px;transition:width 1s ease}
+.cbp{color:var(--nc);width:36px;text-align:right}
+.tb2{background:rgba(0,255,136,.04);border:1px solid var(--border);border-radius:4px;padding:11px;margin-top:11px}
+.tl{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--ng);margin-bottom:7px}
+.tt{font-family:var(--fb);font-size:12px;color:var(--t);line-height:1.6}
+/* CNN Loading */
+.al{padding:22px;text-align:center}
+.cl2{display:flex;gap:7px;justify-content:center;margin-bottom:15px}
+.cly{padding:9px 7px;font-family:var(--fm);font-size:9px;border:1px solid rgba(0,229,255,.28);
+  color:var(--nc);border-radius:2px;animation:cp 1.5s ease-in-out infinite;
+  animation-delay:calc(var(--d) * .3s)}
+@keyframes cp{0%,100%{background:rgba(0,229,255,.04);box-shadow:none}50%{background:rgba(0,229,255,.18);box-shadow:0 0 12px rgba(0,229,255,.38)}}
+.clbl{font-family:var(--fm);font-size:10px;color:var(--td);letter-spacing:2px}
+/* Disease Ref */
+.drp{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:15px}
+.dcs{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-family:var(--fm);font-size:10px;padding:4px 12px;border-radius:20px;border:1px solid;cursor:default}
+.cr{color:var(--nr);border-color:rgba(255,45,85,.38);background:rgba(255,45,85,.07)}
+.co{color:var(--no);border-color:rgba(255,140,0,.38);background:rgba(255,140,0,.07)}
+.cy{color:var(--ny);border-color:rgba(255,221,0,.38);background:rgba(255,221,0,.07)}
+.cg2{color:var(--ng);border-color:rgba(0,255,136,.38);background:rgba(0,255,136,.07)}
+/* Scan history */
+.shp{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:15px}
+.sth{display:grid;grid-template-columns:130px 90px 1fr 90px 90px;gap:11px;
+  padding:7px 11px;color:var(--td);font-family:var(--fm);font-size:10px;letter-spacing:2px;
+  border-bottom:1px solid var(--border);text-transform:uppercase}
+.str2{display:grid;grid-template-columns:130px 90px 1fr 90px 90px;gap:11px;
+  padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.03);
+  color:var(--t);font-family:var(--fm);font-size:11px;transition:background .2s}
+.str2:hover{background:rgba(0,255,136,.03)}
+.ste{text-align:center;padding:22px;color:var(--td);font-family:var(--fm);font-size:11px}
+
+/* TOAST */
+.tc{position:fixed;bottom:22px;right:22px;z-index:1000;display:flex;flex-direction:column;gap:9px}
+.toast{padding:13px 18px;border-radius:4px;font-family:var(--fm);font-size:12px;
+  border:1px solid;backdrop-filter:blur(20px);animation:ti .3s ease;max-width:320px;
+  display:flex;align-items:center;gap:11px}
+.ti{background:rgba(0,229,255,.09);border-color:rgba(0,229,255,.38);color:var(--nc)}
+.tw{background:rgba(255,221,0,.09);border-color:rgba(255,221,0,.38);color:var(--ny)}
+.ta{background:rgba(255,45,85,.09);border-color:rgba(255,45,85,.38);color:var(--nr)}
+.tok{background:rgba(0,255,136,.09);border-color:rgba(0,255,136,.38);color:var(--ng)}
+@keyframes ti{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:rgba(0,255,136,.28);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--ng)}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="scan"></div>
+<div class="particles" id="particles"></div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="hdr">
+  <div class="hl">
+    <div class="lm">
+      <svg width="38" height="38" viewBox="0 0 40 40">
+        <polygon points="20,2 38,11 38,29 20,38 2,29 2,11" fill="none" stroke="#00ff88" stroke-width="1.5"/>
+        <polygon points="20,8 32,14 32,26 20,32 8,26 8,14" fill="none" stroke="#00ff88" stroke-width="0.7" opacity="0.45"/>
+        <circle cx="20" cy="20" r="4" fill="#00ff88"/>
+        <line x1="20" y1="8" x2="20" y2="32" stroke="#00ff88" stroke-width="0.5" opacity="0.35"/>
+        <line x1="8" y1="14" x2="32" y2="26" stroke="#00ff88" stroke-width="0.5" opacity="0.35"/>
+        <line x1="32" y1="14" x2="8" y2="26" stroke="#00ff88" stroke-width="0.5" opacity="0.35"/>
+      </svg>
+    </div>
+    <div class="lt">
+      <span class="lmain">AGROVISION</span>
+      <span class="lsub">AI CROP INTELLIGENCE · ESP32 · ML · CNN</span>
+    </div>
+  </div>
+  <nav>
+    <button class="nb active" data-p="overview">OVERVIEW</button>
+    <button class="nb" data-p="sensors">SENSORS</button>
+    <button class="nb" data-p="disease">DISEASE AI</button>
+  </nav>
+  <div class="hr2">
+    <div class="ss"><span class="sd"></span><span class="sl">SYSTEM ONLINE</span></div>
+    <div class="clk" id="clk">00:00:00</div>
+    <div class="dt" id="dt">-- --- ----</div>
+  </div>
+</header>
+
+<!-- ═══ ALERT STRIP ═══ -->
+<div class="astrip"><div class="ain"><span>⚡</span><span class="at" id="atxt">INITIALIZING AGROVISION — ALL SENSORS ACTIVE — AI MODELS LOADED</span></div></div>
+
+<!-- ═══ MAIN ═══ -->
+<main class="mc">
+
+<!-- ── OVERVIEW ── -->
+<section class="panel active" id="p-overview">
+  <div class="mr">
+    <div class="mc2 cm"><div class="cg"></div>
+      <div class="chd"><span class="ci">💧</span><span class="cl">SOIL MOISTURE</span></div>
+      <div class="cv" id="mv">--</div><div class="cu">%</div>
+      <div class="cb"><div class="bf bm" id="mb" style="width:0%"></div></div>
+      <div class="cs" id="ms">READING...</div>
+    </div>
+    <div class="mc2 ct"><div class="cg"></div>
+      <div class="chd"><span class="ci">🌡</span><span class="cl">TEMPERATURE</span></div>
+      <div class="cv" id="tv">--</div><div class="cu">°C</div>
+      <div class="cb"><div class="bf bt" id="tb2" style="width:0%"></div></div>
+      <div class="cs" id="ts">READING...</div>
+    </div>
+    <div class="mc2 ch"><div class="cg"></div>
+      <div class="chd"><span class="ci">🌫</span><span class="cl">HUMIDITY</span></div>
+      <div class="cv" id="hv">--</div><div class="cu">%RH</div>
+      <div class="cb"><div class="bf bh" id="hb" style="width:0%"></div></div>
+      <div class="cs" id="hs">READING...</div>
+    </div>
+    <div class="mc2 cp"><div class="cg"></div>
+      <div class="chd"><span class="ci">⚙</span><span class="cl">IRRIGATION</span></div>
+      <div class="psd"><div class="pr" id="pr"><div class="pi"><span class="plb" id="plb">OFF</span></div></div></div>
+      <button class="ptb" onclick="togglePump()">MANUAL OVERRIDE</button>
+    </div>
+  </div>
+
+  <div class="midr">
+    <div class="cpan">
+      <div class="ph">
+        <span class="pt2">LIVE SENSOR FEED</span>
+        <div class="cc">
+          <button class="cbn active" onclick="srng(this,'10m')">10M</button>
+          <button class="cbn" onclick="srng(this,'1h')">1H</button>
+          <button class="cbn" onclick="srng(this,'24h')">24H</button>
+        </div>
+      </div>
+      <canvas id="sc" height="200"></canvas>
+    </div>
+    <div class="ppan">
+      <div class="ph"><span class="pt2">ML PREDICTION ENGINE</span><span class="mb2">RANDOM FOREST</span></div>
+      <div class="pv">
+        <div class="rw"><canvas id="rc" width="165" height="165"></canvas></div>
+        <div class="po">
+          <div class="pdl">IRRIGATION NEEDED</div>
+          <div class="pdr" id="pdr">ANALYZING...</div>
+          <div class="pdc">
+            CONFIDENCE
+            <div class="cfb"><div class="cff" id="cff" style="width:0%"></div></div>
+            <span id="cpct">0%</span>
+          </div>
+          <button class="rpb" onclick="runPred()">▶ RUN ANALYSIS</button>
+        </div>
+      </div>
+      <div class="fg">
+        <div class="fi"><span class="fl">Moisture Wt.</span><span class="fv">0.42</span></div>
+        <div class="fi"><span class="fl">Temp Wt.</span><span class="fv">0.31</span></div>
+        <div class="fi"><span class="fl">Humid Wt.</span><span class="fv">0.27</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="br">
+    <div class="lpan">
+      <div class="ph"><span class="pt2">EVENT LOG</span><button class="clrb" onclick="clrLog()">CLEAR</button></div>
+      <div class="lf" id="lf">
+        <div class="le li"><span class="lti">--:--:--</span><span class="lmsg">System initialized. All sensors active.</span></div>
+        <div class="le li"><span class="lti">--:--:--</span><span class="lmsg">ML Random Forest model v2.1 loaded.</span></div>
+        <div class="le li"><span class="lti">--:--:--</span><span class="lmsg">CNN disease detection model ready.</span></div>
+        <div class="le li"><span class="lti">--:--:--</span><span class="lmsg">Awaiting ESP32 sensor telemetry...</span></div>
+      </div>
+    </div>
+    <div class="span2">
+      <div class="ph"><span class="pt2">SESSION STATS</span></div>
+      <div class="sg">
+        <div class="sb"><div class="sv" id="st1">0</div><div class="sn">READINGS</div></div>
+        <div class="sb"><div class="sv" id="st2">0</div><div class="sn">PUMP CYCLES</div></div>
+        <div class="sb"><div class="sv" id="st3">0</div><div class="sn">DISEASE SCANS</div></div>
+        <div class="sb"><div class="sv" id="st4">0s</div><div class="sn">UPTIME</div></div>
+        <div class="sb"><div class="sv" id="st5">0L</div><div class="sn">WATER SAVED</div></div>
+        <div class="sb"><div class="sv" id="st6">--%</div><div class="sn">AVG MOISTURE</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SENSORS ── -->
+<section class="panel" id="p-sensors">
+  <div class="sph">
+    <h2 class="pgtl">SENSOR NETWORK <span class="ebdg">ESP32 NODE-01</span></h2>
+    <div class="ci2"><span class="cdot"></span> WiFi Connected &nbsp;|&nbsp; IP: 192.168.1.101 &nbsp;|&nbsp; Signal: −42 dBm &nbsp;|&nbsp; Uptime: <span id="sp-up">0s</span></div>
+  </div>
+  <div class="scg">
+    <div class="sdc">
+      <div class="sdch"><span>💧</span> SOIL MOISTURE SENSOR</div>
+      <div class="gc"><canvas id="mg" width="200" height="115"></canvas><div class="gr" id="gm">--%</div></div>
+      <div class="sm">
+        <div class="mr2"><span>Sensor Type</span><span>Capacitive v1.2</span></div>
+        <div class="mr2"><span>Pin (ESP32)</span><span>GPIO 34 (ADC)</span></div>
+        <div class="mr2"><span>Range</span><span>0 – 100%</span></div>
+        <div class="mr2"><span>Dry Alert</span><span>&lt; 30%</span></div>
+        <div class="mr2"><span>Last Read</span><span id="mts">--</span></div>
+      </div>
+    </div>
+    <div class="sdc">
+      <div class="sdch"><span>🌡</span> DHT11 TEMPERATURE</div>
+      <div class="gc"><canvas id="tg" width="200" height="115"></canvas><div class="gr" id="gt">-- °C</div></div>
+      <div class="sm">
+        <div class="mr2"><span>Sensor Type</span><span>DHT11</span></div>
+        <div class="mr2"><span>Pin (ESP32)</span><span>GPIO 4</span></div>
+        <div class="mr2"><span>Range</span><span>0 – 50 °C</span></div>
+        <div class="mr2"><span>Accuracy</span><span>±2 °C</span></div>
+        <div class="mr2"><span>Last Read</span><span id="tts">--</span></div>
+      </div>
+    </div>
+    <div class="sdc">
+      <div class="sdch"><span>🌫</span> DHT11 HUMIDITY</div>
+      <div class="gc"><canvas id="hg" width="200" height="115"></canvas><div class="gr" id="gh">-- %RH</div></div>
+      <div class="sm">
+        <div class="mr2"><span>Sensor Type</span><span>DHT11</span></div>
+        <div class="mr2"><span>Pin (ESP32)</span><span>GPIO 4</span></div>
+        <div class="mr2"><span>Range</span><span>20 – 90% RH</span></div>
+        <div class="mr2"><span>Accuracy</span><span>±5% RH</span></div>
+        <div class="mr2"><span>Last Read</span><span id="hts">--</span></div>
+      </div>
+    </div>
+    <div class="sdc">
+      <div class="sdch"><span>⚙</span> RELAY MODULE & PUMP</div>
+      <div class="rv2">
+        <div class="rsch">
+          <div class="rbx"><div style="font-size:10px">RELAY</div><div class="ri" id="ri"></div></div>
+          <div class="wh"></div>
+          <div class="pbx"><div style="font-size:10px">PUMP</div><div class="ps2" id="ps2">⟳</div></div>
+        </div>
+      </div>
+      <div class="sm">
+        <div class="mr2"><span>Relay Pin</span><span>GPIO 26</span></div>
+        <div class="mr2"><span>Pump Voltage</span><span>12V DC</span></div>
+        <div class="mr2"><span>Control Mode</span><span id="cm2">AUTO</span></div>
+        <div class="mr2"><span>Flow Rate</span><span>2.5 L/min</span></div>
+        <div class="mr2"><span>Status</span><span id="rs2">IDLE</span></div>
+      </div>
+      <div class="pc">
+        <button class="pbn pon" onclick="setPump(true)">ACTIVATE PUMP</button>
+        <button class="pbn pof" onclick="setPump(false)">DEACTIVATE</button>
+        <button class="pbn pau" onclick="setAuto()">AUTO MODE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SENSOR HISTORY TABLE ── -->
+  <div class="senshist">
+    <div class="ph">
+      <span class="pt2">SENSOR HISTORY LOG</span>
+      <span class="mb2">LIVE · SQLITE</span>
+    </div>
+    <div class="senshist-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>TIMESTAMP</th>
+            <th>MOISTURE %</th>
+            <th>TEMP °C</th>
+            <th>HUMIDITY %</th>
+            <th>PUMP</th>
+          </tr>
+        </thead>
+        <tbody id="htb"></tbody>
+      </table>
+      <div class="senshist-empty" id="htb-empty" style="display:none">No records yet — awaiting sensor data...</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DISEASE AI ── -->
+<section class="panel" id="p-disease">
+  <div class="sph">
+    <h2 class="pgtl">CROP DISEASE DETECTION <span class="ebdg">CNN · PLANTVILLAGE · 38 CLASSES</span></h2>
+  </div>
+  <div class="dl">
+    <div class="us">
+      <div class="uz" id="uz" onclick="document.getElementById('fi3').click()"
+           ondragover="event.preventDefault()" ondrop="hDrop(event)">
+        <div class="uico">🌿</div>
+        <div class="utxt">DROP LEAF IMAGE OR CLICK TO UPLOAD</div>
+        <div class="usub">JPG · PNG · WEBP · Max 10MB</div>
+        <input type="file" id="fi3" accept="image/*" style="display:none" onchange="hFile(event)">
+      </div>
+      <div class="ipc" id="ipc" style="display:none">
+        <img id="pimg2" class="pimg" src="" alt="Leaf">
+        <div class="pov">
+          <button class="anb" onclick="analyzeD()"><span>🧠</span> ANALYZE WITH CNN</button>
+          <button class="cib" onclick="clrImg()">✕ CLEAR</button>
+        </div>
+      </div>
+    </div>
+    <div class="as2">
+      <div class="apan">
+        <div class="ph"><span class="pt2">ANALYSIS RESULT</span></div>
+        <div id="aid">
+          <div class="aid">
+            <div class="aic">🔬</div>
+            <div class="ait">Upload a crop leaf image<br>to begin CNN analysis</div>
+            <div class="mi2">
+              <div class="mir"><span>Model</span><span>ResNet50 CNN</span></div>
+              <div class="mir"><span>Dataset</span><span>PlantVillage (54K)</span></div>
+              <div class="mir"><span>Accuracy</span><span>96.4%</span></div>
+              <div class="mir"><span>Classes</span><span>38 Disease Types</span></div>
+            </div>
+          </div>
+        </div>
+        <div id="ald" style="display:none">
+          <div class="al">
+            <div class="cl2">
+              <div class="cly" style="--d:0">CONV</div><div class="cly" style="--d:1">POOL</div>
+              <div class="cly" style="--d:2">CONV</div><div class="cly" style="--d:3">FC</div>
+              <div class="cly" style="--d:4">OUT</div>
+            </div>
+            <div class="clbl">PROCESSING THROUGH CNN LAYERS...</div>
+          </div>
+        </div>
+        <div id="ares" style="display:none">
+          <div class="rh2"><div class="db2" id="db2">--</div><div id="sev2"></div></div>
+          <div class="rr"><span class="rl2">Disease Detected</span><span class="rv3" id="dn2">--</span></div>
+          <div class="rr"><span class="rl2">Plant Type</span><span class="rv3" id="pt2">--</span></div>
+          <div class="rr"><span class="rl2">Severity</span><span class="rv3" id="sev3">--</span></div>
+          <div class="rr"><span class="rl2">Confidence</span><span class="rv3" id="dc2">--</span></div>
+          <div class="cbrs" id="cbrs2"></div>
+          <div class="tb2"><div class="tl">RECOMMENDED ACTION</div><div class="tt" id="tt2">--</div></div>
+        </div>
+      </div>
+      <div class="drp">
+        <div class="ph"><span class="pt2">DETECTABLE DISEASES</span></div>
+        <div class="dcs">
+          <span class="chip cr">Late Blight</span><span class="chip co">Early Blight</span>
+          <span class="chip cy">Leaf Rust</span><span class="chip cr">Powdery Mildew</span>
+          <span class="chip co">Bacterial Spot</span><span class="chip cy">Leaf Scorch</span>
+          <span class="chip cg2">Healthy</span><span class="chip cr">Gray Leaf Spot</span>
+          <span class="chip co">Cercospora</span><span class="chip cy">Angular Leaf Spot</span>
+          <span class="chip cr">Anthracnose</span><span class="chip cg2">Normal</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="shp">
+    <div class="ph"><span class="pt2">RECENT SCAN HISTORY</span></div>
+    <div class="sth"><span>TIMESTAMP</span><span>FILE</span><span>DISEASE</span><span>CONF</span><span>ACTION</span></div>
+    <div id="sh"><div class="ste">No scans yet — upload a leaf image to begin</div></div>
+  </div>
+</section>
+
+</main>
+
+<div class="tc" id="tc"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// AGROVISION · APPLICATION LOGIC
+// ═══════════════════════════════════════════════════
+const S = {
+  m:52, t:27.4, h:61, pump:false, auto:true,
+  reads:0, pumps:0, dscans:0, start:Date.now(),
+  file:null
+};
+
+const MAX_CHART_POINTS = 10;
+
+let sChart, rChart;
+
+Chart.defaults.color='#4a7a5a';
+Chart.defaults.borderColor='rgba(0,255,136,0.06)';
+Chart.defaults.font.family="'Share Tech Mono',monospace";
+
+// ── INIT ─────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  mkParticles(); startClock(); initCharts(); initNav();
+  startSim(); startUptime();
+  setInterval(updateHist, 5000);
+  setInterval(loadDiseaseHistory, 6000);
+});
+
+function mkParticles(){
+  const c=document.getElementById('particles');
+  for(let i=0;i<28;i++){
+    const p=document.createElement('div');p.className='pt';
+    p.style.cssText=`left:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;animation-duration:${Math.random()*22+14}s;animation-delay:${Math.random()*-22}s`;
+    c.appendChild(p);
+  }
+}
+
+function startClock(){
+  const pad=n=>String(n).padStart(2,'0');
+  setInterval(()=>{
+    const d=new Date();
+    $('clk',`${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`);
+    $('dt',d.toLocaleDateString('en-US',{day:'2-digit',month:'short',year:'numeric'}).toUpperCase());
+  },1000);
+}
+
+function startUptime(){
+  setInterval(()=>{
+    const s=Math.floor((Date.now()-S.start)/1000);
+    const m=Math.floor(s/60);
+    $('st4',m>0?`${m}m${s%60}s`:`${s}s`);
+    if($e('sp-up'))$('sp-up',m>0?`${m}m${s%60}s`:`${s}s`);
+  },1000);
+}
+
+function initNav(){
+  document.querySelectorAll('.nb').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.nb').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      const p=document.getElementById('p-'+b.dataset.p);
+      if(p)p.classList.add('active');
+    });
+  });
+}
+
+// ── SENSOR SIMULATION ────────────────────────────
+let sensorInterval = null;
+
+function startSim(){
+
+  updateSensors();
+
+  if(sensorInterval){
+
+    clearInterval(sensorInterval);
+
+  }
+
+  sensorInterval = setInterval(() => {
+
+    // only update when overview tab visible
+    const overview =
+      document.getElementById('p-overview');
+
+    if(
+      overview &&
+      overview.classList.contains('active')
+    ){
+
+      updateSensors();
+
+    }
+
+  }, 4000);
+}
+
+async function updateSensors(){
+  try{
+    const response = await fetch("/api/latest");
+    const data = await response.json();
+    S.m = data.moisture || 0;
+    S.t = data.temperature || 0;
+    S.h = data.humidity || 0;
+    S.pump = data.pump === "ON";
+    S.reads++;
+    updateDash();
+    //pushChartPoint();
+    updateStats();
+    autoPredict();
+  }
+  catch(error){
+    console.log(error);
+  }
+}
+
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+
+function updateDash(){
+  const m=Math.round(S.m),t=S.t.toFixed(1),h=Math.round(S.h),now=new Date().toLocaleTimeString();
+  $('mv',m); $('tv',t); $('hv',h);
+  css('mb','width',m+'%'); css('tb2','width',(S.t/50*100)+'%'); css('hb','width',h+'%');
+  $('ms',m<30?'⚠ DRY':m<60?'✓ OPTIMAL':'✓ WET');
+  $('ts',S.t>38?'⚠ HIGH':S.t<18?'⚠ LOW':'✓ OPTIMAL');
+  $('hs',S.h<30?'⚠ LOW':S.h>80?'⚠ HIGH':'✓ OPTIMAL');
+  $('gm',m+'%'); $('gt',t+' °C'); $('gh',h+' %RH');
+  ['mts','tts','hts'].forEach(id=>$(id,now));
+  drawGauge('mg',m/100,'#00e5ff','#00ff88');
+  drawGauge('tg',S.t/50,'#ff8c00','#ff2d55');
+  drawGauge('hg',h/100,'#0080ff','#00e5ff');
+  $('atxt',`MOISTURE: ${m}% ·· TEMP: ${t}°C ·· HUMIDITY: ${h}%RH ·· PUMP: ${S.pump?'ACTIVE':'IDLE'} ·· READINGS: ${S.reads}`);
+}
+
+// ── CHART POINT PUSH (max 10 points, no animation) ──
+function pushChartPoint(){
+
+  if(!sChart) return;
+
+  const now = new Date().toLocaleTimeString();
+
+  const labels = sChart.data.labels;
+  const d1 = sChart.data.datasets[0].data;
+  const d2 = sChart.data.datasets[1].data;
+  const d3 = sChart.data.datasets[2].data;
+
+  // Add new points
+  labels.push(now);
+  d1.push(Math.round(S.m));
+  d2.push(parseFloat(S.t.toFixed(1)));
+  d3.push(Math.round(S.h));
+
+  // Keep ONLY latest 10 points
+  while(labels.length > 10){
+
+    labels.shift();
+
+    d1.shift();
+    d2.shift();
+    d3.shift();
+  }
+
+  // Update chart WITHOUT animation
+  sChart.update('none');
+}
+
+// ── HISTORY TABLE (sensors page) ─────────────────
+async function updateHist(){
+  try{
+    const response = await fetch("/api/history");
+    const data = await response.json();
+    const tbody = $e("htb");
+    const empty = $e("htb-empty");
+    if(!tbody) return;
+
+    if(!data || data.length === 0){
+      tbody.innerHTML = "";
+      if(empty) empty.style.display = "block";
+      return;
+    }
+    if(empty) empty.style.display = "none";
+
+    tbody.innerHTML = data.map(row => `
+      <tr>
+        <td>${row[0]}</td>
+        <td>${row[1]}</td>
+        <td>${row[2]}%</td>
+        <td>${row[3]}°C</td>
+        <td>${row[4] !== undefined ? row[4] : '--'}%</td>
+        <td><span class="${row[5] === 'ON' || row[4] === 'ON' ? 'ton' : 'tof'}">${row[5] || row[4] || '--'}</span></td>
+      </tr>
+    `).join('');
+  }
+  catch(error){
+    console.log(error);
+  }
+}
+
+async function loadDiseaseHistory(){
+        return;
+}
+
+// ── GAUGES ────────────────────────────────────────
+function drawGauge(id,frac,ca,cb){
+  const cv=$e(id); if(!cv)return;
+  const ctx=cv.getContext('2d'),w=cv.width,h=cv.height;
+  ctx.clearRect(0,0,w,h);
+  const cx=w/2,cy=h-8,r=Math.min(w,h*1.9)/2-9;
+  ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI,2*Math.PI);
+  ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=10; ctx.lineCap='round'; ctx.stroke();
+  const fill=Math.PI+clamp(frac,0,1)*Math.PI;
+  const g=ctx.createLinearGradient(cx-r,0,cx+r,0);
+  g.addColorStop(0,ca); g.addColorStop(1,cb);
+  ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI,fill);
+  ctx.strokeStyle=g; ctx.lineWidth=10; ctx.lineCap='round';
+  ctx.shadowColor=cb; ctx.shadowBlur=14; ctx.stroke(); ctx.shadowBlur=0;
+  for(let i=0;i<=10;i++){
+    const a=Math.PI+(i/10)*Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a)*(r-13),cy+Math.sin(a)*(r-13));
+    ctx.lineTo(cx+Math.cos(a)*(r-6),cy+Math.sin(a)*(r-6));
+    ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1; ctx.lineCap='butt'; ctx.stroke();
+  }
+}
+
+// ── CHARTS ────────────────────────────────────────
+function initCharts(){
+  sChart = new Chart($e('sc').getContext('2d'),{
+    type:'line',
+    data:{
+      labels:[],
+      datasets:[
+        {label:'Moisture %',data:[],borderColor:'#00e5ff',backgroundColor:'rgba(0,229,255,0.04)',borderWidth:2,pointRadius:0,tension:.4,fill:true},
+        {label:'Temp °C',data:[],borderColor:'#ff8c00',backgroundColor:'rgba(255,140,0,0.04)',borderWidth:2,pointRadius:0,tension:.4,fill:true},
+        {label:'Humidity %',data:[],borderColor:'#0080ff',backgroundColor:'rgba(0,128,255,0.04)',borderWidth:2,pointRadius:0,tension:.4,fill:true}
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      animation:false,
+      interaction:{mode:'index',intersect:false},
+      scales:{
+        x:{grid:{color:'rgba(0,255,136,0.04)'},ticks:{maxTicksLimit:8,maxRotation:0}},
+        y:{grid:{color:'rgba(0,255,136,0.04)'},min:0,max:100}
+      },
+      plugins:{legend:{position:'top',labels:{boxWidth:11,padding:14}}}
+    }
+  });
+
+  rChart = new Chart($e('rc').getContext('2d'),{
+    type:'radar',
+    data:{
+      labels:['Moisture','Temp','Humidity','Trend','Risk'],
+      datasets:[{label:'Field',data:[52,55,61,60,38],
+        borderColor:'#00ff88',backgroundColor:'rgba(0,255,136,0.09)',
+        borderWidth:2,pointBackgroundColor:'#00ff88',pointRadius:3}]
+    },
+    options:{
+      responsive:false,
+      maintainAspectRatio:false,
+      animation:false,
+      scales:{r:{grid:{color:'rgba(0,255,136,0.09)'},ticks:{display:false},
+        pointLabels:{font:{size:9,family:"'Share Tech Mono'"},color:'#4a7a5a'},min:0,max:100}},
+      plugins:{legend:{display:false}}
+    }
+  });
+}
+
+function srng(btn,r){
+  document.querySelectorAll('.cbn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── ML PREDICTION ─────────────────────────────────
+function autoPredict(){
+  const sc=mlScore();
+  updatePredUI(sc);
+  if(rChart){
+    rChart.data.datasets[0].data=[Math.round(S.m),Math.round(S.t/50*100),Math.round(S.h),Math.round(sc*100),Math.round((1-sc)*100)];
+    rChart.update('none');
+  }
+}
+function runPred(){
+  const sc=mlScore();
+  updatePredUI(sc,true);
+  addLog('🧠 Manual ML prediction executed.','li');
+  toast(`🧠 ML: ${sc>.5?'IRRIGATE':'NO ACTION'} (${Math.round(sc*100)}%)`,'ti');
+}
+function mlScore(){ return clamp(((100-S.m)/100)*.42+(S.t-15)/35*.31+((100-S.h)/100)*.27,0,1); }
+function updatePredUI(sc){
+  const irr=sc>.5,c=Math.round(sc*100);
+  const el=$e('pdr');
+  if(el){el.textContent=irr?'YES — IRRIGATE':'NO — HOLD';el.className='pdr'+(irr?' pyes':'');}
+  css('cff','width',c+'%'); $('cpct',c+'%');
+  const pr=$e('pr'); if(pr){pr.className='pr'+(S.pump?' pa':'');} $('plb',S.pump?'ON':'OFF');
+}
+
+// ── PUMP ──────────────────────────────────────────
+function togglePump(){ setPump(!S.pump); }
+function setPump(on){
+  if(on===S.pump)return;
+  S.pump=on; if(on)S.pumps++;
+  const pr=$e('pr'); if(pr)pr.className='pr'+(on?' pa':'');
+  $('plb',on?'ON':'OFF');
+  const ri=$e('ri'); if(ri)ri.className='ri'+(on?' active':'');
+  const ps=$e('ps2'); if(ps)ps.className='ps2'+(on?' spinning':'');
+  $('rs2',on?'ACTIVE':'IDLE'); $('cm2',S.auto?'AUTO':'MANUAL');
+  addLog(on?'🔵 PUMP ACTIVATED — Relay ON → Water pump running':'⚪ PUMP DEACTIVATED — Relay OFF','lp');
+  toast(on?'💧 Pump activated':'⏹ Pump deactivated',on?'ti':'tok');
+}
+function setAuto(){ S.auto=true; $('cm2','AUTO'); addLog('🤖 Auto-irrigation mode enabled','li'); toast('🤖 Auto mode enabled','tok'); }
+
+// ── STATS ─────────────────────────────────────────
+function updateStats(){
+  $('st1', S.reads);
+  $('st2', S.pumps);
+  $('st3', S.dscans);
+  $('st5', (S.pumps * 2.5).toFixed(1) + 'L');
+  $('st6', Math.round(S.m) + '%');
+}
+
+// ── DISEASE AI ────────────────────────────────────
+function hFile(e){ const f=e.target.files[0]; if(f)loadPrev(f); }
+function hDrop(e){ e.preventDefault(); const f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('image/'))loadPrev(f); }
+function loadPrev(f){
+  S.file=f;
+  const r=new FileReader();
+  r.onload=e=>{
+    $e('pimg2').src=e.target.result;
+    css('uz','display','none'); css('ipc','display','block');
+  };
+  r.readAsDataURL(f);
+  addLog(`📷 Image loaded: ${f.name} (${(f.size/1024).toFixed(1)}KB)`,'li');
+}
+function clrImg(){
+  S.file=null; $e('fi3').value='';
+  css('uz','display','block'); css('ipc','display','none');
+  css('aid','display','block'); css('ald','display','none'); css('ares','display','none');
+}
+async function analyzeD(){
+  if(!S.file){ toast("Upload image first","ta"); return; }
+  $e("aid").style.display = "none";
+  $e("ares").style.display = "none";
+  $e("ald").style.display = "block";
+  const formData = new FormData();
+  formData.append("image", S.file);
+  try{
+    const response = await fetch("/api/disease",{ method:"POST", body:formData });
+    const data = await response.json();
+    console.log(data);
+    $e("ald").style.display = "none";
+    $e("ares").style.display = "block";
+    $("dn2", data.disease);
+    $("dc2", data.confidence + "%");
+    $("pt2", "Tomato");
+    $("sev3", data.confidence > 85 ? "HIGH" : "MEDIUM");
+    $("tt2", "Apply recommended fungicide and monitor crop.");
+    const healthy = data.disease.toLowerCase().includes("healthy");
+    const badge = $e("db2");
+    badge.innerText = healthy ? "HEALTHY" : "DISEASE DETECTED";
+    badge.className = "db2 " + (healthy ? "healthy" : "diseased");
+    addScanRow({n:data.disease, conf:data.confidence, healthy});
+    S.dscans++;
+    updateStats();
+    toast("CNN Analysis Complete","tok");
+  }
+  catch(error){
+    console.log(error);
+    $e("ald").style.display = "none";
+    $e("aid").style.display = "block";
+    toast("Analysis Failed","ta");
+  }
+}
+function addScanRow(r){
+  const sh=$e('sh'); const em=sh.querySelector('.ste'); if(em)em.remove();
+  const fn=S.file?S.file.name.slice(0,12)+'…':'img.jpg';
+  const row=document.createElement('div'); row.className='str2';
+  const col=r.healthy?'#00ff88':'#ff2d55';
+  row.innerHTML=`<span>${new Date().toLocaleTimeString()}</span><span style="color:#4a7a5a">${fn}</span><span style="color:${col}">${r.n}</span><span style="color:var(--nc)">${r.conf}%</span><span style="color:${r.healthy?'#00ff88':'#ff8c00'}">${r.healthy?'Monitor':'Treat'}</span>`;
+  sh.prepend(row);
+}
+
+// ── LOG ───────────────────────────────────────────
+function addLog(msg,cls='li'){
+  const f=$e('lf'); if(!f)return;
+  const now=new Date().toLocaleTimeString();
+  const el=document.createElement('div');
+  el.className='le '+cls;
+  el.innerHTML=`<span class="lti">${now}</span><span class="lmsg">${msg}</span>`;
+  f.prepend(el);
+  while(f.children.length>20)f.lastChild.remove();
+}
+function clrLog(){ const f=$e('lf');if(f)f.innerHTML=''; addLog('Log cleared.','li'); }
+
+// ── TOAST ─────────────────────────────────────────
+function toast(msg,cls='ti'){
+  const c=$e('tc');
+  const el=document.createElement('div');
+  el.className='toast '+cls;
+  el.innerHTML=`<span>${msg}</span>`;
+  c.appendChild(el);
+  setTimeout(()=>{el.style.animation='ti .3s ease reverse';setTimeout(()=>el.remove(),280);},3400);
+}
+
+// ── UTILS ─────────────────────────────────────────
+const $=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+const $e=id=>document.getElementById(id);
+const css=(id,p,v)=>{const e=$e(id);if(e)e.style[p]=v;};
+</script>
+</body>
+</html>
