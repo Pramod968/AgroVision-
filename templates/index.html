@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/translations.js') }}"></script>
 <style>
 /* ══════════════════════════════════════════════════
    AGROVISION · DARK NEON HACKATHON THEME
@@ -23,7 +24,7 @@
   --fb:'Rajdhani',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow-x:hidden;background:var(--bg);color:var(--t);font-family:var(--fb);font-size:14px}
+html,body{width:100%;height:100%;overflow-x:hidden;background:var(--bg);color:var(--t);font-family:var(--fb);font-size:19px}
 
 /* BG GRID */
 .bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -42,17 +43,17 @@ html,body{width:100%;height:100%;overflow-x:hidden;background:var(--bg);color:va
 
 /* HEADER */
 .hdr{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
-  padding:0 22px;height:62px;background:rgba(5,10,14,.97);
+  padding:0 22px;height:72px;background:rgba(5,10,14,.97);
   border-bottom:1px solid var(--border);backdrop-filter:blur(24px);
   box-shadow:0 2px 40px rgba(0,255,136,.06)}
 .hl{display:flex;align-items:center;gap:14px}
 .lm{filter:drop-shadow(0 0 10px rgba(0,255,136,.6))}
 .lt{display:flex;flex-direction:column}
-.lmain{font-family:var(--ft);font-size:17px;font-weight:900;color:var(--ng);
-  letter-spacing:4px;text-shadow:0 0 22px rgba(0,255,136,.8),0 0 44px rgba(0,255,136,.3)}
-.lsub{font-family:var(--fm);font-size:8px;color:var(--td);letter-spacing:2px}
+.lmain{font-family:var(--ft);font-size:34px;font-weight:900;color:var(--ng);
+  letter-spacing:2px;text-shadow:0 0 22px rgba(0,255,136,.8),0 0 44px rgba(0,255,136,.3)}
+.lsub{font-family:var(--fm);font-size:12px;color:var(--td);letter-spacing:2px}
 nav{display:flex;gap:4px}
-.nb{font-family:var(--fm);font-size:11px;letter-spacing:2px;padding:7px 15px;
+.nb{font-family:var(--fm);font-size:13px;letter-spacing:2px;padding:8px 16px;
   background:transparent;border:1px solid transparent;color:var(--td);
   cursor:pointer;transition:all .2s;border-radius:2px}
 .nb:hover{border-color:var(--border);color:var(--ng)}
@@ -76,16 +77,17 @@ nav{display:flex;gap:4px}
 @keyframes st{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
 
 /* PANELS */
-.mc{position:relative;z-index:5;padding:18px 22px}
+.mc{position:relative;z-index:5;padding:22px 24px}
 .panel{display:none}
 .panel.active{display:block;animation:fp .3s ease}
 @keyframes fp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── METRIC CARDS ── */
-.mr{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
-.mc2{position:relative;padding:18px;background:var(--panel);border-radius:4px;
-  border:1px solid var(--border);overflow:hidden;transition:border-color .3s,transform .2s}
-.mc2:hover{border-color:rgba(0,255,136,.38);transform:translateY(-2px)}
+.mr{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.mc2{position:relative;padding:22px 20px 18px;background:var(--panel);border-radius:6px;
+  border:1px solid var(--border);overflow:hidden;transition:border-color .3s,transform .2s;
+  box-shadow:inset 0 0 0 1px rgba(0,255,136,.03),0 0 18px rgba(0,229,255,.06)}
+.mc2:hover{border-color:rgba(0,255,136,.45);transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(0,255,136,.08),0 0 24px rgba(0,229,255,.12)}
 .cg{position:absolute;top:-50%;left:-50%;width:200%;height:200%;
   border-radius:50%;pointer-events:none;animation:cgl 5s ease-in-out infinite alternate}
 .cm .cg{background:radial-gradient(circle,rgba(0,229,255,.05) 0%,transparent 70%)}
@@ -93,17 +95,17 @@ nav{display:flex;gap:4px}
 .ch .cg{background:radial-gradient(circle,rgba(0,128,255,.05) 0%,transparent 70%)}
 .cp .cg{background:radial-gradient(circle,rgba(0,255,136,.05) 0%,transparent 70%)}
 @keyframes cgl{0%{transform:translate(10%,10%)}100%{transform:translate(-10%,-10%)}}
-.chd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.ci{font-size:18px}.cl{font-family:var(--fm);font-size:10px;letter-spacing:2px;color:var(--td)}
-.cv{font-family:var(--ft);font-size:40px;font-weight:900;color:var(--tb);line-height:1;
-  text-shadow:0 0 28px rgba(0,255,136,.25)}
-.cu{font-family:var(--fm);font-size:12px;color:var(--td);margin:3px 0 9px}
-.cb{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-bottom:7px;overflow:hidden}
+.chd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ci{font-size:28px}.cl{font-family:var(--fm);font-size:15px;letter-spacing:2px;color:var(--td)}
+.cv{font-family:var(--ft);font-size:72px;font-weight:900;color:var(--tb);line-height:1;
+  text-shadow:0 0 30px rgba(0,255,136,.3)}
+.cu{font-family:var(--fm);font-size:17px;color:var(--td);margin:4px 0 10px}
+.cb{height:5px;background:rgba(255,255,255,.05);border-radius:2px;margin-bottom:8px;overflow:hidden}
 .bf{height:100%;border-radius:2px;transition:width 1.2s ease}
 .bm{background:linear-gradient(90deg,var(--nc),var(--nb));box-shadow:0 0 8px var(--nc)}
 .bt{background:linear-gradient(90deg,var(--no),var(--nr));box-shadow:0 0 8px var(--no)}
 .bh{background:linear-gradient(90deg,var(--nb),var(--nc));box-shadow:0 0 8px var(--nb)}
-.cs{font-family:var(--fm);font-size:10px;color:var(--ng);letter-spacing:1px}
+.cs{font-family:var(--fm);font-size:14px;color:var(--ng);letter-spacing:1px}
 
 /* Pump */
 .psd{display:flex;justify-content:center;margin:8px 0}
@@ -116,17 +118,17 @@ nav{display:flex;gap:4px}
 .pi{text-align:center}
 .plb{font-family:var(--ft);font-size:14px;font-weight:700;color:var(--ng)}
 .pr.pa .plb{color:var(--nc)}
-.ptb{width:100%;margin-top:7px;padding:7px;font-family:var(--fm);font-size:10px;letter-spacing:2px;
+.ptb{width:100%;margin-top:9px;padding:9px 10px;font-family:var(--fm);font-size:11px;letter-spacing:2px;
   background:rgba(0,255,136,.07);border:1px solid var(--border);color:var(--ng);
   cursor:pointer;transition:all .2s;border-radius:2px}
 .ptb:hover{background:rgba(0,255,136,.14);box-shadow:0 0 12px rgba(0,255,136,.2)}
 
 /* ── MIDDLE ROW ── */
-.midr{display:grid;grid-template-columns:1fr 370px;gap:14px;margin-bottom:18px}
-.cpan,.ppan,.lpan,.span2{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:15px}
-.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;
-  padding-bottom:9px;border-bottom:1px solid var(--border)}
-.pt2{font-family:var(--fm);font-size:11px;letter-spacing:3px;color:var(--ng)}
+.midr{display:grid;grid-template-columns:1.35fr 390px;gap:16px;margin-bottom:20px}
+.cpan,.ppan,.lpan,.span2{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:16px}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:1px solid var(--border)}
+.pt2{font-family:var(--fm);font-size:12px;letter-spacing:3px;color:var(--ng)}
 .cc{display:flex;gap:5px}
 .cbn{font-family:var(--fm);font-size:10px;padding:4px 9px;background:transparent;
   border:1px solid var(--border);color:var(--td);cursor:pointer;transition:all .2s;border-radius:2px}
@@ -138,13 +140,13 @@ nav{display:flex;gap:4px}
 .pv{display:flex;gap:14px;align-items:center;margin-bottom:13px}
 .rw{flex-shrink:0}
 .po{flex:1}
-.pdl{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--td);margin-bottom:4px}
-.pdr{font-family:var(--ft);font-size:19px;font-weight:700;color:var(--ng);margin-bottom:10px}
+.pdl{font-family:var(--fm);font-size:12px;letter-spacing:2px;color:var(--td);margin-bottom:6px}
+.pdr{font-family:var(--ft);font-size:28px;font-weight:700;color:var(--ng);margin-bottom:10px}
 .pdr.pyes{color:var(--nc);text-shadow:0 0 20px rgba(0,229,255,.55)}
-.pdc{font-family:var(--fm);font-size:10px;color:var(--td)}
+.pdc{font-family:var(--fm);font-size:12px;color:var(--td)}
 .cfb{height:4px;background:rgba(255,255,255,.05);border-radius:2px;margin:5px 0 4px}
 .cff{height:100%;background:linear-gradient(90deg,var(--ng),var(--nc));border-radius:2px;transition:width 1.2s ease}
-.rpb{margin-top:10px;padding:8px 14px;font-family:var(--fm);font-size:10px;letter-spacing:2px;
+.rpb{margin-top:12px;padding:10px 14px;font-family:var(--fm);font-size:11px;letter-spacing:2px;
   background:rgba(0,229,255,.09);border:1px solid rgba(0,229,255,.28);color:var(--nc);
   cursor:pointer;transition:all .2s;border-radius:2px;width:100%}
 .rpb:hover{background:rgba(0,229,255,.18);box-shadow:0 0 16px rgba(0,229,255,.3)}
@@ -171,7 +173,7 @@ nav{display:flex;gap:4px}
 
 /* ══ SENSOR PAGE ══ */
 .sph{margin-bottom:18px}
-.pgtl{font-family:var(--ft);font-size:19px;font-weight:700;color:var(--ng);letter-spacing:3px}
+.pgtl{font-family:var(--ft);font-size:20px;font-weight:700;color:var(--ng);letter-spacing:2px}
 .ebdg{font-family:var(--fm);font-size:10px;letter-spacing:2px;color:var(--nc);
   border:1px solid rgba(0,229,255,.28);padding:4px 10px;border-radius:2px;margin-left:12px}
 .ci2{font-family:var(--fm);font-size:11px;color:var(--td);margin-top:7px}
@@ -328,24 +330,33 @@ nav{display:flex;gap:4px}
       </svg>
     </div>
     <div class="lt">
-      <span class="lmain">AGROVISION</span>
+      <span class="lmain">AgroVision / ಅಗ್ರೋವಿಷನ್</span>
       <span class="lsub">AI CROP INTELLIGENCE · ESP32 · ML · CNN</span>
     </div>
   </div>
   <nav>
-    <button class="nb active" data-p="overview">OVERVIEW</button>
-    <button class="nb" data-p="sensors">SENSORS</button>
-    <button class="nb" data-p="disease">DISEASE AI</button>
+    <button class="nb active" data-p="overview" data-i18n="dashboard">OVERVIEW</button>
+    <button class="nb" data-p="sensors" data-i18n="sensor">SENSORS</button>
+    <button class="nb" data-p="disease" data-i18n="disease">DISEASE AI</button>
+
   </nav>
   <div class="hr2">
-    <div class="ss"><span class="sd"></span><span class="sl">SYSTEM ONLINE</span></div>
+    <div class="language-selector">
+    <span>🌐</span>
+
+    <select id="languageSelect" onchange="changeLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="kn">ಕನ್ನಡ</option>
+    </select>
+</div>
+    <div class="ss"><span class="sd"></span><span class="sl" data-i18n="systemOnline">SYSTEM ONLINE</span></div>
     <div class="clk" id="clk">00:00:00</div>
     <div class="dt" id="dt">-- --- ----</div>
   </div>
 </header>
 
 <!-- ═══ ALERT STRIP ═══ -->
-<div class="astrip"><div class="ain"><span>⚡</span><span class="at" id="atxt">INITIALIZING AGROVISION — ALL SENSORS ACTIVE — AI MODELS LOADED</span></div></div>
+<div class="astrip"><div class="ain"><span>⚡</span><span class="at" id="atxt" data-i18n="initMessage">INITIALIZING AGROVISION — ALL SENSORS ACTIVE — AI MODELS LOADED</span></div></div>
 
 <!-- ═══ MAIN ═══ -->
 <main class="mc">
@@ -354,34 +365,34 @@ nav{display:flex;gap:4px}
 <section class="panel active" id="p-overview">
   <div class="mr">
     <div class="mc2 cm"><div class="cg"></div>
-      <div class="chd"><span class="ci">💧</span><span class="cl">SOIL MOISTURE</span></div>
-      <div class="cv" id="mv">--</div><div class="cu">%</div>
+    <div class="chd"><span class="ci">💧</span><span class="cl" data-i18n="moisture">SOIL MOISTURE</span></div>      <div class="cv" id="mv">--</div><div class="cu">%</div>
       <div class="cb"><div class="bf bm" id="mb" style="width:0%"></div></div>
       <div class="cs" id="ms">READING...</div>
     </div>
     <div class="mc2 ct"><div class="cg"></div>
-      <div class="chd"><span class="ci">🌡</span><span class="cl">TEMPERATURE</span></div>
-      <div class="cv" id="tv">--</div><div class="cu">°C</div>
+<div class="chd"><span class="ci">🌡</span><span class="cl" data-i18n="temperature">TEMPERATURE</span></div>
+      <div class="cv" id="tv">--</div>
+      <div class="cu">°C</div>
       <div class="cb"><div class="bf bt" id="tb2" style="width:0%"></div></div>
       <div class="cs" id="ts">READING...</div>
     </div>
     <div class="mc2 ch"><div class="cg"></div>
-      <div class="chd"><span class="ci">🌫</span><span class="cl">HUMIDITY</span></div>
+      <div class="chd"><span class="ci">🌫</span><span class="cl" data-i18n="humidity">HUMIDITY</span></div>
       <div class="cv" id="hv">--</div><div class="cu">%RH</div>
       <div class="cb"><div class="bf bh" id="hb" style="width:0%"></div></div>
       <div class="cs" id="hs">READING...</div>
     </div>
     <div class="mc2 cp"><div class="cg"></div>
-      <div class="chd"><span class="ci">⚙</span><span class="cl">IRRIGATION</span></div>
+      <div class="chd"><span class="ci">⚙</span><span class="cl" data-i18n="irrigation">IRRIGATION</span></div>
       <div class="psd"><div class="pr" id="pr"><div class="pi"><span class="plb" id="plb">OFF</span></div></div></div>
-      <button class="ptb" onclick="togglePump()">MANUAL OVERRIDE</button>
+      <button class="ptb" onclick="togglePump()" data-i18n="manualOverride">MANUAL OVERRIDE</button>
     </div>
   </div>
 
   <div class="midr">
     <div class="cpan">
       <div class="ph">
-        <span class="pt2">LIVE SENSOR FEED</span>
+        <span class="pt2" data-i18n="liveSensorFeed">LIVE SENSOR FEED</span>
         <div class="cc">
           <button class="cbn active" onclick="srng(this,'10m')">10M</button>
           <button class="cbn" onclick="srng(this,'1h')">1H</button>
@@ -391,31 +402,31 @@ nav{display:flex;gap:4px}
       <canvas id="sc" height="200"></canvas>
     </div>
     <div class="ppan">
-      <div class="ph"><span class="pt2">ML PREDICTION ENGINE</span><span class="mb2">RANDOM FOREST</span></div>
+      <div class="ph"><span class="pt2" data-i18n="mlPredictionEngine">ML PREDICTION ENGINE</span><span class="mb2" data-i18n="randomForest">RANDOM FOREST</span></div>
       <div class="pv">
         <div class="rw"><canvas id="rc" width="165" height="165"></canvas></div>
         <div class="po">
-          <div class="pdl">IRRIGATION NEEDED</div>
+          <div class="pdl" data-i18n="irrigationNeeded">IRRIGATION NEEDED</div>
           <div class="pdr" id="pdr">ANALYZING...</div>
           <div class="pdc">
-            CONFIDENCE
+            <span data-i18n="confidence">CONFIDENCE</span>
             <div class="cfb"><div class="cff" id="cff" style="width:0%"></div></div>
             <span id="cpct">0%</span>
           </div>
-          <button class="rpb" onclick="runPred()">▶ RUN ANALYSIS</button>
+          <button class="rpb" onclick="runPred()" data-i18n="runAnalysis">▶ RUN ANALYSIS</button>
         </div>
       </div>
       <div class="fg">
-        <div class="fi"><span class="fl">Moisture Wt.</span><span class="fv">0.42</span></div>
-        <div class="fi"><span class="fl">Temp Wt.</span><span class="fv">0.31</span></div>
-        <div class="fi"><span class="fl">Humid Wt.</span><span class="fv">0.27</span></div>
+        <div class="fi"><span class="fl" data-i18n="moistureWeight">Moisture Wt.</span><span class="fv">0.42</span></div>
+        <div class="fi"><span class="fl" data-i18n="tempWeight">Temp Wt.</span><span class="fv">0.31</span></div>
+        <div class="fi"><span class="fl" data-i18n="humidityWeight">Humid Wt.</span><span class="fv">0.27</span></div>
       </div>
     </div>
   </div>
 
   <div class="br">
     <div class="lpan">
-      <div class="ph"><span class="pt2">EVENT LOG</span><button class="clrb" onclick="clrLog()">CLEAR</button></div>
+      <div class="ph"><span class="pt2" data-i18n="eventLog">EVENT LOG</span><button class="clrb" onclick="clrLog()" data-i18n="clear">CLEAR</button></div>
       <div class="lf" id="lf">
         <div class="le li"><span class="lti">--:--:--</span><span class="lmsg">System initialized. All sensors active.</span></div>
         <div class="le li"><span class="lti">--:--:--</span><span class="lmsg">ML Random Forest model v2.1 loaded.</span></div>
@@ -424,14 +435,14 @@ nav{display:flex;gap:4px}
       </div>
     </div>
     <div class="span2">
-      <div class="ph"><span class="pt2">SESSION STATS</span></div>
+      <div class="ph"><span class="pt2" data-i18n="sessionStats">SESSION STATS</span></div>
       <div class="sg">
-        <div class="sb"><div class="sv" id="st1">0</div><div class="sn">READINGS</div></div>
-        <div class="sb"><div class="sv" id="st2">0</div><div class="sn">PUMP CYCLES</div></div>
-        <div class="sb"><div class="sv" id="st3">0</div><div class="sn">DISEASE SCANS</div></div>
-        <div class="sb"><div class="sv" id="st4">0s</div><div class="sn">UPTIME</div></div>
-        <div class="sb"><div class="sv" id="st5">0L</div><div class="sn">WATER SAVED</div></div>
-        <div class="sb"><div class="sv" id="st6">--%</div><div class="sn">AVG MOISTURE</div></div>
+        <div class="sb"><div class="sv" id="st1">0</div><div class="sn" data-i18n="readings">READINGS</div></div>
+        <div class="sb"><div class="sv" id="st2">0</div><div class="sn" data-i18n="pumpCycles">PUMP CYCLES</div></div>
+        <div class="sb"><div class="sv" id="st3">0</div><div class="sn" data-i18n="diseaseScans">DISEASE SCANS</div></div>
+        <div class="sb"><div class="sv" id="st4">0s</div><div class="sn" data-i18n="uptime">UPTIME</div></div>
+        <div class="sb"><div class="sv" id="st5">0L</div><div class="sn" data-i18n="waterSaved">WATER SAVED</div></div>
+        <div class="sb"><div class="sv" id="st6">--%</div><div class="sn" data-i18n="avgMoisture">AVG MOISTURE</div></div>
       </div>
     </div>
   </div>
@@ -440,63 +451,63 @@ nav{display:flex;gap:4px}
 <!-- ── SENSORS ── -->
 <section class="panel" id="p-sensors">
   <div class="sph">
-    <h2 class="pgtl">SENSOR NETWORK <span class="ebdg">ESP32 NODE-01</span></h2>
-    <div class="ci2"><span class="cdot"></span> WiFi Connected &nbsp;|&nbsp; IP: 192.168.1.101 &nbsp;|&nbsp; Signal: −42 dBm &nbsp;|&nbsp; Uptime: <span id="sp-up">0s</span></div>
+    <h2 class="pgtl" data-i18n="sensorNetwork">SENSOR NETWORK <span class="ebdg">ESP32 NODE-01</span></h2>
+    <div class="ci2"><span class="cdot"></span> <span data-i18n="wifiConnected">WiFi Connected</span> &nbsp;|&nbsp; IP: 192.168.1.101 &nbsp;|&nbsp; Signal: −42 dBm &nbsp;|&nbsp; Uptime: <span id="sp-up">0s</span></div>
   </div>
   <div class="scg">
     <div class="sdc">
-      <div class="sdch"><span>💧</span> SOIL MOISTURE SENSOR</div>
+      <div class="sdch"><span>💧</span> <span data-i18n="soilMoistureSensor">SOIL MOISTURE SENSOR</span></div>
       <div class="gc"><canvas id="mg" width="200" height="115"></canvas><div class="gr" id="gm">--%</div></div>
       <div class="sm">
-        <div class="mr2"><span>Sensor Type</span><span>Capacitive v1.2</span></div>
-        <div class="mr2"><span>Pin (ESP32)</span><span>GPIO 34 (ADC)</span></div>
-        <div class="mr2"><span>Range</span><span>0 – 100%</span></div>
-        <div class="mr2"><span>Dry Alert</span><span>&lt; 30%</span></div>
-        <div class="mr2"><span>Last Read</span><span id="mts">--</span></div>
+        <div class="mr2"><span data-i18n="sensorType">Sensor Type</span><span>Capacitive v1.2</span></div>
+        <div class="mr2"><span data-i18n="pinEsp32">Pin (ESP32)</span><span>GPIO 34 (ADC)</span></div>
+        <div class="mr2"><span data-i18n="range">Range</span><span>0 – 100%</span></div>
+        <div class="mr2"><span data-i18n="dryAlert">Dry Alert</span><span>&lt; 30%</span></div>
+        <div class="mr2"><span data-i18n="lastRead">Last Read</span><span id="mts">--</span></div>
       </div>
     </div>
     <div class="sdc">
-      <div class="sdch"><span>🌡</span> DHT11 TEMPERATURE</div>
+      <div class="sdch"><span>🌡</span> <span data-i18n="dht11Temperature">DHT11 TEMPERATURE</span></div>
       <div class="gc"><canvas id="tg" width="200" height="115"></canvas><div class="gr" id="gt">-- °C</div></div>
       <div class="sm">
-        <div class="mr2"><span>Sensor Type</span><span>DHT11</span></div>
-        <div class="mr2"><span>Pin (ESP32)</span><span>GPIO 4</span></div>
-        <div class="mr2"><span>Range</span><span>0 – 50 °C</span></div>
-        <div class="mr2"><span>Accuracy</span><span>±2 °C</span></div>
-        <div class="mr2"><span>Last Read</span><span id="tts">--</span></div>
+        <div class="mr2"><span data-i18n="sensorType">Sensor Type</span><span>DHT11</span></div>
+        <div class="mr2"><span data-i18n="pinEsp32">Pin (ESP32)</span><span>GPIO 4</span></div>
+        <div class="mr2"><span data-i18n="range">Range</span><span>0 – 50 °C</span></div>
+        <div class="mr2"><span data-i18n="accuracy">Accuracy</span><span>±2 °C</span></div>
+        <div class="mr2"><span data-i18n="lastRead">Last Read</span><span id="tts">--</span></div>
       </div>
     </div>
     <div class="sdc">
-      <div class="sdch"><span>🌫</span> DHT11 HUMIDITY</div>
+      <div class="sdch"><span>🌫</span> <span data-i18n="dht11Humidity">DHT11 HUMIDITY</span></div>
       <div class="gc"><canvas id="hg" width="200" height="115"></canvas><div class="gr" id="gh">-- %RH</div></div>
       <div class="sm">
-        <div class="mr2"><span>Sensor Type</span><span>DHT11</span></div>
-        <div class="mr2"><span>Pin (ESP32)</span><span>GPIO 4</span></div>
-        <div class="mr2"><span>Range</span><span>20 – 90% RH</span></div>
-        <div class="mr2"><span>Accuracy</span><span>±5% RH</span></div>
-        <div class="mr2"><span>Last Read</span><span id="hts">--</span></div>
+        <div class="mr2"><span data-i18n="sensorType">Sensor Type</span><span>DHT11</span></div>
+        <div class="mr2"><span data-i18n="pinEsp32">Pin (ESP32)</span><span>GPIO 4</span></div>
+        <div class="mr2"><span data-i18n="range">Range</span><span>20 – 90% RH</span></div>
+        <div class="mr2"><span data-i18n="accuracy">Accuracy</span><span>±5% RH</span></div>
+        <div class="mr2"><span data-i18n="lastRead">Last Read</span><span id="hts">--</span></div>
       </div>
     </div>
     <div class="sdc">
-      <div class="sdch"><span>⚙</span> RELAY MODULE & PUMP</div>
+      <div class="sdch"><span>⚙</span> <span data-i18n="relayModulePump">RELAY MODULE & PUMP</span></div>
       <div class="rv2">
         <div class="rsch">
-          <div class="rbx"><div style="font-size:10px">RELAY</div><div class="ri" id="ri"></div></div>
+          <div class="rbx"><div style="font-size:10px" data-i18n="relay">RELAY</div><div class="ri" id="ri"></div></div>
           <div class="wh"></div>
-          <div class="pbx"><div style="font-size:10px">PUMP</div><div class="ps2" id="ps2">⟳</div></div>
+          <div class="pbx"><div style="font-size:10px" data-i18n="pump">PUMP</div><div class="ps2" id="ps2">⟳</div></div>
         </div>
       </div>
       <div class="sm">
-        <div class="mr2"><span>Relay Pin</span><span>GPIO 26</span></div>
-        <div class="mr2"><span>Pump Voltage</span><span>12V DC</span></div>
-        <div class="mr2"><span>Control Mode</span><span id="cm2">AUTO</span></div>
-        <div class="mr2"><span>Flow Rate</span><span>2.5 L/min</span></div>
-        <div class="mr2"><span>Status</span><span id="rs2">IDLE</span></div>
+        <div class="mr2"><span data-i18n="relayPin">Relay Pin</span><span>GPIO 26</span></div>
+        <div class="mr2"><span data-i18n="pumpVoltage">Pump Voltage</span><span>12V DC</span></div>
+        <div class="mr2"><span data-i18n="controlMode">Control Mode</span><span id="cm2">AUTO</span></div>
+        <div class="mr2"><span data-i18n="flowRate">Flow Rate</span><span>2.5 L/min</span></div>
+        <div class="mr2"><span data-i18n="status">Status</span><span id="rs2">IDLE</span></div>
       </div>
       <div class="pc">
-        <button class="pbn pon" onclick="setPump(true)">ACTIVATE PUMP</button>
-        <button class="pbn pof" onclick="setPump(false)">DEACTIVATE</button>
-        <button class="pbn pau" onclick="setAuto()">AUTO MODE</button>
+        <button class="pbn pon" onclick="setPump(true)" data-i18n="activatePump">ACTIVATE PUMP</button>
+        <button class="pbn pof" onclick="setPump(false)" data-i18n="deactivatePump">DEACTIVATE</button>
+        <button class="pbn pau" onclick="setAuto()" data-i18n="autoMode">AUTO MODE</button>
       </div>
     </div>
   </div>
@@ -504,24 +515,24 @@ nav{display:flex;gap:4px}
   <!-- ── SENSOR HISTORY TABLE ── -->
   <div class="senshist">
     <div class="ph">
-      <span class="pt2">SENSOR HISTORY LOG</span>
-      <span class="mb2">LIVE · SQLITE</span>
+      <span class="pt2" data-i18n="sensorHistoryLog">SENSOR HISTORY LOG</span>
+      <span class="mb2" data-i18n="liveSqlite">LIVE · SQLITE</span>
     </div>
     <div class="senshist-wrap">
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>TIMESTAMP</th>
-            <th>MOISTURE %</th>
-            <th>TEMP °C</th>
-            <th>HUMIDITY %</th>
-            <th>PUMP</th>
+            <th data-i18n="id">ID</th>
+            <th data-i18n="timestamp">TIMESTAMP</th>
+            <th data-i18n="moisturePercent">MOISTURE %</th>
+            <th data-i18n="tempC">TEMP °C</th>
+            <th data-i18n="humidityPercent">HUMIDITY %</th>
+            <th data-i18n="pump">PUMP</th>
           </tr>
         </thead>
         <tbody id="htb"></tbody>
       </table>
-      <div class="senshist-empty" id="htb-empty" style="display:none">No records yet — awaiting sensor data...</div>
+      <div class="senshist-empty" id="htb-empty" style="display:none" data-i18n="noRecords">No records yet — awaiting sensor data...</div>
     </div>
   </div>
 </section>
@@ -529,37 +540,37 @@ nav{display:flex;gap:4px}
 <!-- ── DISEASE AI ── -->
 <section class="panel" id="p-disease">
   <div class="sph">
-    <h2 class="pgtl">CROP DISEASE DETECTION <span class="ebdg">CNN · PLANTVILLAGE · 38 CLASSES</span></h2>
+    <h2 class="pgtl" data-i18n="cropDiseaseDetection">CROP DISEASE DETECTION <span class="ebdg">CNN · PLANTVILLAGE · 38 CLASSES</span></h2>
   </div>
   <div class="dl">
     <div class="us">
       <div class="uz" id="uz" onclick="document.getElementById('fi3').click()"
            ondragover="event.preventDefault()" ondrop="hDrop(event)">
         <div class="uico">🌿</div>
-        <div class="utxt">DROP LEAF IMAGE OR CLICK TO UPLOAD</div>
+        <div class="utxt" data-i18n="dropLeafImage">DROP LEAF IMAGE OR CLICK TO UPLOAD</div>
         <div class="usub">JPG · PNG · WEBP · Max 10MB</div>
         <input type="file" id="fi3" accept="image/*" style="display:none" onchange="hFile(event)">
       </div>
       <div class="ipc" id="ipc" style="display:none">
         <img id="pimg2" class="pimg" src="" alt="Leaf">
         <div class="pov">
-          <button class="anb" onclick="analyzeD()"><span>🧠</span> ANALYZE WITH CNN</button>
+          <button class="anb" onclick="analyzeD()"><span>🧠</span> <span data-i18n="analysisWithCnn">ANALYZE WITH CNN</span></button>
           <button class="cib" onclick="clrImg()">✕ CLEAR</button>
         </div>
       </div>
     </div>
     <div class="as2">
       <div class="apan">
-        <div class="ph"><span class="pt2">ANALYSIS RESULT</span></div>
+        <div class="ph"><span class="pt2" data-i18n="analysisResult">ANALYSIS RESULT</span></div>
         <div id="aid">
           <div class="aid">
             <div class="aic">🔬</div>
             <div class="ait">Upload a crop leaf image<br>to begin CNN analysis</div>
             <div class="mi2">
-              <div class="mir"><span>Model</span><span>ResNet50 CNN</span></div>
-              <div class="mir"><span>Dataset</span><span>PlantVillage (54K)</span></div>
-              <div class="mir"><span>Accuracy</span><span>96.4%</span></div>
-              <div class="mir"><span>Classes</span><span>38 Disease Types</span></div>
+              <div class="mir"><span data-i18n="model">Model</span><span>ResNet50 CNN</span></div>
+              <div class="mir"><span data-i18n="dataset">Dataset</span><span>PlantVillage (54K)</span></div>
+              <div class="mir"><span data-i18n="accuracy">Accuracy</span><span>96.4%</span></div>
+              <div class="mir"><span data-i18n="classes">Classes</span><span>38 Disease Types</span></div>
             </div>
           </div>
         </div>
@@ -570,36 +581,36 @@ nav{display:flex;gap:4px}
               <div class="cly" style="--d:2">CONV</div><div class="cly" style="--d:3">FC</div>
               <div class="cly" style="--d:4">OUT</div>
             </div>
-            <div class="clbl">PROCESSING THROUGH CNN LAYERS...</div>
+            <div class="clbl" data-i18n="processing">PROCESSING THROUGH CNN LAYERS...</div>
           </div>
         </div>
         <div id="ares" style="display:none">
           <div class="rh2"><div class="db2" id="db2">--</div><div id="sev2"></div></div>
-          <div class="rr"><span class="rl2">Disease Detected</span><span class="rv3" id="dn2">--</span></div>
-          <div class="rr"><span class="rl2">Plant Type</span><span class="rv3" id="pt2">--</span></div>
-          <div class="rr"><span class="rl2">Severity</span><span class="rv3" id="sev3">--</span></div>
-          <div class="rr"><span class="rl2">Confidence</span><span class="rv3" id="dc2">--</span></div>
+          <div class="rr"><span class="rl2" data-i18n="diseaseDetected">Disease Detected</span><span class="rv3" id="dn2">--</span></div>
+          <div class="rr"><span class="rl2" data-i18n="plantType">Plant Type</span><span class="rv3" id="pt2">--</span></div>
+          <div class="rr"><span class="rl2" data-i18n="severity">Severity</span><span class="rv3" id="sev3">--</span></div>
+          <div class="rr"><span class="rl2" data-i18n="confidence">Confidence</span><span class="rv3" id="dc2">--</span></div>
           <div class="cbrs" id="cbrs2"></div>
-          <div class="tb2"><div class="tl">RECOMMENDED ACTION</div><div class="tt" id="tt2">--</div></div>
+          <div class="tb2"><div class="tl" data-i18n="recommendedAction">RECOMMENDED ACTION</div><div class="tt" id="tt2">--</div></div>
         </div>
       </div>
       <div class="drp">
-        <div class="ph"><span class="pt2">DETECTABLE DISEASES</span></div>
+        <div class="ph"><span class="pt2" data-i18n="detectableDiseases">DETECTABLE DISEASES</span></div>
         <div class="dcs">
           <span class="chip cr">Late Blight</span><span class="chip co">Early Blight</span>
           <span class="chip cy">Leaf Rust</span><span class="chip cr">Powdery Mildew</span>
           <span class="chip co">Bacterial Spot</span><span class="chip cy">Leaf Scorch</span>
-          <span class="chip cg2">Healthy</span><span class="chip cr">Gray Leaf Spot</span>
+          <span class="chip cg2" data-i18n="healthyLabel">Healthy</span><span class="chip cr">Gray Leaf Spot</span>
           <span class="chip co">Cercospora</span><span class="chip cy">Angular Leaf Spot</span>
-          <span class="chip cr">Anthracnose</span><span class="chip cg2">Normal</span>
+          <span class="chip cr">Anthracnose</span><span class="chip cg2" data-i18n="normalLabel">Normal</span>
         </div>
       </div>
     </div>
   </div>
   <div class="shp">
-    <div class="ph"><span class="pt2">RECENT SCAN HISTORY</span></div>
-    <div class="sth"><span>TIMESTAMP</span><span>FILE</span><span>DISEASE</span><span>CONF</span><span>ACTION</span></div>
-    <div id="sh"><div class="ste">No scans yet — upload a leaf image to begin</div></div>
+    <div class="ph"><span class="pt2" data-i18n="recentScanHistory">RECENT SCAN HISTORY</span></div>
+    <div class="sth"><span data-i18n="timestampShort">TIMESTAMP</span><span data-i18n="fileShort">FILE</span><span data-i18n="diseaseShort">DISEASE</span><span data-i18n="confShort">CONF</span><span data-i18n="actionShort">ACTION</span></div>
+    <div id="sh"><div class="ste" data-i18n="recentScanHint">No scans yet — upload a leaf image to begin</div></div>
   </div>
 </section>
 
@@ -960,12 +971,16 @@ async function analyzeD(){
     $e("ares").style.display = "block";
     $("dn2", data.disease);
     $("dc2", data.confidence + "%");
-    $("pt2", "Tomato");
-    $("sev3", data.confidence > 85 ? "HIGH" : "MEDIUM");
-    $("tt2", "Apply recommended fungicide and monitor crop.");
+    $("pt2", getTranslation('plantTomato'));
+    const severity = data.confidence > 85 ? 'high' : 'medium';
+    $("sev3", severity === 'high' ? getTranslation('severityHigh') : getTranslation('severityMedium'));
+    $("sev3").dataset.severity = severity;
+    $("tt2", getTranslation('recommendedActionText'));
+    $("tt2").dataset.defaultText = 'recommendedActionText';
     const healthy = data.disease.toLowerCase().includes("healthy");
     const badge = $e("db2");
-    badge.innerText = healthy ? "HEALTHY" : "DISEASE DETECTED";
+    badge.dataset.resultState = healthy ? 'healthy' : 'diseased';
+    badge.innerText = healthy ? getTranslation('healthyStatus') : getTranslation('diseaseStatus');
     badge.className = "db2 " + (healthy ? "healthy" : "diseased");
     addScanRow({n:data.disease, conf:data.confidence, healthy});
     S.dscans++;
@@ -1014,6 +1029,41 @@ function toast(msg,cls='ti'){
 const $=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
 const $e=id=>document.getElementById(id);
 const css=(id,p,v)=>{const e=$e(id);if(e)e.style[p]=v;};
+</script>
+<script>
+let currentLanguage = 'en';
+
+function getTranslation(key) {
+    const lang = translations[currentLanguage] || translations.en;
+    return (lang && lang[key]) ? lang[key] : (translations.en && translations.en[key] ? translations.en[key] : key);
+}
+
+function changeLanguage(language) {
+    currentLanguage = language;
+
+    document.querySelectorAll("[data-i18n]").forEach(function(element) {
+        const key = element.getAttribute("data-i18n");
+        const value = getTranslation(key);
+        if (value) element.textContent = value;
+    });
+
+    const badge = $e('db2');
+    if (badge && badge.dataset.resultState) {
+        const healthy = badge.dataset.resultState === 'healthy';
+        badge.textContent = healthy ? getTranslation('healthyStatus') : getTranslation('diseaseStatus');
+        badge.className = 'db2 ' + (healthy ? 'healthy' : 'diseased');
+    }
+
+    const sev3 = $e('sev3');
+    if (sev3 && sev3.dataset.severity) {
+        sev3.textContent = sev3.dataset.severity === 'high' ? getTranslation('severityHigh') : getTranslation('severityMedium');
+    }
+
+    const tt2 = $e('tt2');
+    if (tt2 && tt2.dataset.defaultText) {
+        tt2.textContent = getTranslation('recommendedActionText');
+    }
+}
 </script>
 </body>
 </html>
