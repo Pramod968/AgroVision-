@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+<script src="{{ url_for('static', filename='js/chatbot.js') }}" defer></script>
 <style>
 /* ══════════════════════════════════════════════════
    AGROVISION · DARK NEON HACKATHON THEME
@@ -126,6 +128,8 @@ nav{display:flex;gap:4px}
 /* ── MIDDLE ROW ── */
 .midr{display:grid;grid-template-columns:1.35fr 390px;gap:16px;margin-bottom:20px}
 .cpan,.ppan,.lpan,.span2{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:16px}
+.cpan{min-height:300px}
+.cpan canvas{display:block;width:100% !important;height:200px !important}
 .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;
   padding-bottom:10px;border-bottom:1px solid var(--border)}
 .pt2{font-family:var(--fm);font-size:12px;letter-spacing:3px;color:var(--ng)}
@@ -384,7 +388,7 @@ nav{display:flex;gap:4px}
     </div>
     <div class="mc2 cp"><div class="cg"></div>
       <div class="chd"><span class="ci">⚙</span><span class="cl" data-i18n="irrigation">IRRIGATION</span></div>
-      <div class="psd"><div class="pr" id="pr"><div class="pi"><span class="plb" id="plb">OFF</span></div></div></div>
+      <div class="psd"><div class="pr" id="pr"><div class="pi"><span class="plb" id="plb" data-i18n="pumpOff">OFF</span></div></div></div>
       <button class="ptb" onclick="togglePump()" data-i18n="manualOverride">MANUAL OVERRIDE</button>
     </div>
   </div>
@@ -407,7 +411,7 @@ nav{display:flex;gap:4px}
         <div class="rw"><canvas id="rc" width="165" height="165"></canvas></div>
         <div class="po">
           <div class="pdl" data-i18n="irrigationNeeded">IRRIGATION NEEDED</div>
-          <div class="pdr" id="pdr">ANALYZING...</div>
+          <div class="pdr" id="pdr" data-i18n="analyzing">ANALYZING...</div>
           <div class="pdc">
             <span data-i18n="confidence">CONFIDENCE</span>
             <div class="cfb"><div class="cff" id="cff" style="width:0%"></div></div>
@@ -565,7 +569,7 @@ nav{display:flex;gap:4px}
         <div id="aid">
           <div class="aid">
             <div class="aic">🔬</div>
-            <div class="ait">Upload a crop leaf image<br>to begin CNN analysis</div>
+            <div class="ait"><span data-i18n="uploadCropLeaf">Upload a crop leaf image</span><br><span data-i18n="beginCnnAnalysis">to begin CNN analysis</span></div>
             <div class="mi2">
               <div class="mir"><span data-i18n="model">Model</span><span>ResNet50 CNN</span></div>
               <div class="mir"><span data-i18n="dataset">Dataset</span><span>PlantVillage (54K)</span></div>
@@ -597,12 +601,12 @@ nav{display:flex;gap:4px}
       <div class="drp">
         <div class="ph"><span class="pt2" data-i18n="detectableDiseases">DETECTABLE DISEASES</span></div>
         <div class="dcs">
-          <span class="chip cr">Late Blight</span><span class="chip co">Early Blight</span>
-          <span class="chip cy">Leaf Rust</span><span class="chip cr">Powdery Mildew</span>
-          <span class="chip co">Bacterial Spot</span><span class="chip cy">Leaf Scorch</span>
-          <span class="chip cg2" data-i18n="healthyLabel">Healthy</span><span class="chip cr">Gray Leaf Spot</span>
-          <span class="chip co">Cercospora</span><span class="chip cy">Angular Leaf Spot</span>
-          <span class="chip cr">Anthracnose</span><span class="chip cg2" data-i18n="normalLabel">Normal</span>
+          <span class="chip cr" data-i18n="lateBlight">Late Blight</span><span class="chip co" data-i18n="earlyBlight">Early Blight</span>
+          <span class="chip cy" data-i18n="leafRust">Leaf Rust</span><span class="chip cr" data-i18n="powderyMildew">Powdery Mildew</span>
+          <span class="chip co" data-i18n="bacterialSpot">Bacterial Spot</span><span class="chip cy" data-i18n="leafScorch">Leaf Scorch</span>
+          <span class="chip cg2" data-i18n="healthyLabel">Healthy</span><span class="chip cr" data-i18n="grayLeafSpot">Gray Leaf Spot</span>
+          <span class="chip co" data-i18n="cercospora">Cercospora</span><span class="chip cy" data-i18n="angularLeafSpot">Angular Leaf Spot</span>
+          <span class="chip cr" data-i18n="anthracnose">Anthracnose</span><span class="chip cg2" data-i18n="normalLabel">Normal</span>
         </div>
       </div>
     </div>
@@ -617,6 +621,24 @@ nav{display:flex;gap:4px}
 </main>
 
 <div class="tc" id="tc"></div>
+
+<button class="chatbot-launcher" id="chatbotLauncher" type="button" aria-controls="chatbotPanel" aria-expanded="false">
+  <span class="chatbot-launcher-icon" aria-hidden="true">🤖</span><span class="chatbot-launcher-label" data-i18n="chatbotOpen">AI CHAT</span><span class="chatbot-notification" aria-hidden="true"></span>
+</button>
+<section class="chatbot-panel" id="chatbotPanel" aria-hidden="true">
+  <header class="chatbot-header">
+    <div class="chatbot-identity"><div class="chatbot-avatar" aria-hidden="true">🌾</div><div><strong data-i18n="chatbotTitle">AgroVision AI</strong><span><i class="chatbot-online-dot"></i><span data-i18n="chatbotSubtitle">Your Smart Farming Assistant</span></span></div></div>
+    <div class="chatbot-header-actions">
+      <button type="button" id="chatbotClear" title="Clear conversation" aria-label="Clear conversation">🗑️</button>
+      <button type="button" id="chatbotClose" title="Close chat" aria-label="Close chat">×</button>
+    </div>
+  </header>
+  <div class="chatbot-messages" id="chatbotMessages" aria-live="polite"></div>
+  <div class="chatbot-composer">
+    <textarea id="chatbotInput" rows="2" maxlength="2000" data-i18n-placeholder="chatbotPlaceholder" placeholder="Ask your farming question..."></textarea>
+    <button type="button" id="chatbotSend" title="Send message" aria-label="Send message"><span aria-hidden="true">➤</span><span class="chatbot-send-label" data-i18n="chatbotSend">Send</span></button>
+  </div>
+</section>
 
 <script>
 // ═══════════════════════════════════════════════════
@@ -739,15 +761,15 @@ function updateDash(){
   const m=Math.round(S.m),t=S.t.toFixed(1),h=Math.round(S.h),now=new Date().toLocaleTimeString();
   $('mv',m); $('tv',t); $('hv',h);
   css('mb','width',m+'%'); css('tb2','width',(S.t/50*100)+'%'); css('hb','width',h+'%');
-  $('ms',m<30?'⚠ DRY':m<60?'✓ OPTIMAL':'✓ WET');
-  $('ts',S.t>38?'⚠ HIGH':S.t<18?'⚠ LOW':'✓ OPTIMAL');
-  $('hs',S.h<30?'⚠ LOW':S.h>80?'⚠ HIGH':'✓ OPTIMAL');
+  $('ms',m<30?'⚠ '+getTranslation('dry'):m<60?'✓ '+getTranslation('optimal'):'✓ '+getTranslation('wet'));
+  $('ts',S.t>38?'⚠ '+getTranslation('high'):S.t<18?'⚠ '+getTranslation('low'):'✓ '+getTranslation('optimal'));
+  $('hs',S.h<30?'⚠ '+getTranslation('low'):S.h>80?'⚠ '+getTranslation('high'):'✓ '+getTranslation('optimal'));
   $('gm',m+'%'); $('gt',t+' °C'); $('gh',h+' %RH');
   ['mts','tts','hts'].forEach(id=>$(id,now));
   drawGauge('mg',m/100,'#00e5ff','#00ff88');
   drawGauge('tg',S.t/50,'#ff8c00','#ff2d55');
   drawGauge('hg',h/100,'#0080ff','#00e5ff');
-  $('atxt',`MOISTURE: ${m}% ·· TEMP: ${t}°C ·· HUMIDITY: ${h}%RH ·· PUMP: ${S.pump?'ACTIVE':'IDLE'} ·· READINGS: ${S.reads}`);
+  $('atxt',`${getTranslation('moisture').toUpperCase()}: ${m}% ·· ${getTranslation('temperature').toUpperCase()}: ${t}°C ·· ${getTranslation('humidity').toUpperCase()}: ${h}%RH ·· ${getTranslation('pump').toUpperCase()}: ${S.pump?getTranslation('active').toUpperCase():getTranslation('idle').toUpperCase()} ·· ${getTranslation('readings').toUpperCase()}: ${S.reads}`);
 }
 
 // ── CHART POINT PUSH (max 10 points, no animation) ──
@@ -848,9 +870,9 @@ function initCharts(){
     data:{
       labels:[],
       datasets:[
-        {label:'Moisture %',data:[],borderColor:'#00e5ff',backgroundColor:'rgba(0,229,255,0.04)',borderWidth:2,pointRadius:0,tension:.4,fill:true},
-        {label:'Temp °C',data:[],borderColor:'#ff8c00',backgroundColor:'rgba(255,140,0,0.04)',borderWidth:2,pointRadius:0,tension:.4,fill:true},
-        {label:'Humidity %',data:[],borderColor:'#0080ff',backgroundColor:'rgba(0,128,255,0.04)',borderWidth:2,pointRadius:0,tension:.4,fill:true}
+        {label:getTranslation('chartMoisture'),data:[],borderColor:'#00e5ff',backgroundColor:'rgba(0,229,255,0.04)',borderWidth:2,pointRadius:0,tension:.4,fill:true},
+        {label:getTranslation('chartTemperature'),data:[],borderColor:'#ff8c00',backgroundColor:'rgba(255,140,0,0.04)',borderWidth:2,pointRadius:0,tension:.4,fill:true},
+        {label:getTranslation('chartHumidity'),data:[],borderColor:'#0080ff',backgroundColor:'rgba(0,128,255,0.04)',borderWidth:2,pointRadius:0,tension:.4,fill:true}
       ]
     },
     options:{
@@ -869,7 +891,7 @@ function initCharts(){
   rChart = new Chart($e('rc').getContext('2d'),{
     type:'radar',
     data:{
-      labels:['Moisture','Temp','Humidity','Trend','Risk'],
+      labels:[getTranslation('chartMoistureShort'),getTranslation('chartTemperatureShort'),getTranslation('chartHumidityShort'),getTranslation('trend'),getTranslation('risk')],
       datasets:[{label:'Field',data:[52,55,61,60,38],
         borderColor:'#00ff88',backgroundColor:'rgba(0,255,136,0.09)',
         borderWidth:2,pointBackgroundColor:'#00ff88',pointRadius:3}]
@@ -909,7 +931,7 @@ function mlScore(){ return clamp(((100-S.m)/100)*.42+(S.t-15)/35*.31+((100-S.h)/
 function updatePredUI(sc){
   const irr=sc>.5,c=Math.round(sc*100);
   const el=$e('pdr');
-  if(el){el.textContent=irr?'YES — IRRIGATE':'NO — HOLD';el.className='pdr'+(irr?' pyes':'');}
+  if(el){el.textContent=irr?getTranslation('yesIrrigate'):getTranslation('noHold');el.className='pdr'+(irr?' pyes':'');}
   css('cff','width',c+'%'); $('cpct',c+'%');
   const pr=$e('pr'); if(pr){pr.className='pr'+(S.pump?' pa':'');} $('plb',S.pump?'ON':'OFF');
 }
@@ -920,10 +942,10 @@ function setPump(on){
   if(on===S.pump)return;
   S.pump=on; if(on)S.pumps++;
   const pr=$e('pr'); if(pr)pr.className='pr'+(on?' pa':'');
-  $('plb',on?'ON':'OFF');
+  $('plb',on?getTranslation('pumpOn'):getTranslation('pumpOff'));
   const ri=$e('ri'); if(ri)ri.className='ri'+(on?' active':'');
   const ps=$e('ps2'); if(ps)ps.className='ps2'+(on?' spinning':'');
-  $('rs2',on?'ACTIVE':'IDLE'); $('cm2',S.auto?'AUTO':'MANUAL');
+  $('rs2',on?getTranslation('active'):getTranslation('idle')); $('cm2',S.auto?getTranslation('autoMode'):getTranslation('manual'));
   addLog(on?'🔵 PUMP ACTIVATED — Relay ON → Water pump running':'⚪ PUMP DEACTIVATED — Relay OFF','lp');
   toast(on?'💧 Pump activated':'⏹ Pump deactivated',on?'ti':'tok');
 }
@@ -1062,6 +1084,20 @@ function changeLanguage(language) {
     const tt2 = $e('tt2');
     if (tt2 && tt2.dataset.defaultText) {
         tt2.textContent = getTranslation('recommendedActionText');
+    }
+
+    updateDash();
+    updatePredUI(mlScore());
+    if (window.refreshChatbotLanguage) window.refreshChatbotLanguage();
+    if (sChart) {
+      sChart.data.datasets[0].label = getTranslation('chartMoisture');
+      sChart.data.datasets[1].label = getTranslation('chartTemperature');
+      sChart.data.datasets[2].label = getTranslation('chartHumidity');
+      sChart.update('none');
+    }
+    if (rChart) {
+      rChart.data.labels = [getTranslation('chartMoistureShort'), getTranslation('chartTemperatureShort'), getTranslation('chartHumidityShort'), getTranslation('trend'), getTranslation('risk')];
+      rChart.update('none');
     }
 }
 </script>

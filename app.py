@@ -1,13 +1,20 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
+from google import genai
+from google.genai import types
 import sqlite3
 import joblib
 import numpy as np
 import random
 import os
+import re
+import uuid
 import tensorflow as tf
 
 from PIL import Image
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -90,6 +97,17 @@ CREATE TABLE IF NOT EXISTS sensor_data (
     pump TEXT
 )
 """)
+conn.execute("""
+CREATE TABLE IF NOT EXISTS chat_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conversation_id TEXT NOT NULL,
+    role TEXT NOT NULL CHECK(role IN ('user', 'assistant')),
+    message TEXT NOT NULL,
+    language TEXT NOT NULL DEFAULT 'en',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+""")
+conn.commit()
 
 # =========================
 # HOME PAGE
@@ -182,6 +200,140 @@ def sensor():
 def latest():
 
     return jsonify(latest_data)
+
+# =========================
+# AGRICULTURAL AI CHATBOT
+# =========================
+
+CHATBOT_SYSTEM_PROMPT = """You are AgroVision AI, a helpful agricultural assistant for farmers.
+Give simple, practical, easy-to-understand guidance about crops, irrigation, soil moisture,
+temperature, humidity, crop diseases, fertilizers, and general farming practices.
+Use short explanations and practical steps. Answer in the user's selected language whenever
+possible. If the user uses Kannada, answer in simple Kannada. If symptoms are described,
+explain possible causes without claiming an exact diagnosis when information is insufficient.
+For pesticide or chemical advice, tell the user to follow the product label and consult a local
+agricultural expert. Do not provide unsafe chemical mixing instructions. Say clearly when data
+is unavailable or uncertain. You are an information assistant, not a replacement for a qualified
+agricultural officer."""
+
+CHAT_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]{8,80}$")
+
+
+def chat_conversation_id(payload):
+    conversation_id = payload.get("conversation_id")
+    if not isinstance(conversation_id, str) or not CHAT_ID_PATTERN.fullmatch(conversation_id):
+        return None
+    return conversation_id
+
+
+@app.route("/api/chat/history", methods=["GET"])
+def chat_history():
+    conversation_id = request.args.get("conversation_id", "")
+    if not CHAT_ID_PATTERN.fullmatch(conversation_id):
+        return jsonify({"messages": []})
+    rows = conn.execute(
+        """SELECT role, message, language FROM chat_messages
+           WHERE conversation_id = ? ORDER BY id ASC LIMIT 100""",
+        (conversation_id,)
+    ).fetchall()
+    return jsonify({
+        "messages": [
+            {"role": role, "content": message, "language": language}
+            for role, message, language in rows
+        ]
+    })
+
+
+@app.route("/api/chat/history", methods=["DELETE"])
+def clear_chat_history():
+    conversation_id = request.args.get("conversation_id", "")
+    if not CHAT_ID_PATTERN.fullmatch(conversation_id):
+        return jsonify({"error": True, "message": "Invalid conversation."}), 400
+    conn.execute("DELETE FROM chat_messages WHERE conversation_id = ?", (conversation_id,))
+    conn.commit()
+    return jsonify({"success": True})
+
+
+@app.route("/api/chat", methods=["POST"])
+def chat():
+    payload = request.get_json(silent=True) or {}
+    message = payload.get("message")
+    language = payload.get("language", "en")
+    conversation_id = chat_conversation_id(payload)
+
+    if not isinstance(message, str) or not message.strip():
+        return jsonify({"error": True, "message": "Please enter a farming question."}), 400
+    if len(message) > 2000:
+        return jsonify({"error": True, "message": "Please keep your question under 2000 characters."}), 400
+    if language not in {"en", "kn"}:
+        language = "en"
+    if conversation_id is None:
+        conversation_id = f"legacy-{uuid.uuid4().hex}"
+
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return jsonify({
+            "error": True,
+            "message": "AI chatbot is not configured. Please add GEMINI_API_KEY."
+        }), 503
+
+    latest_scan = conn.execute(
+        "SELECT disease, confidence FROM disease_scans ORDER BY id DESC LIMIT 1"
+    ).fetchone()
+    context = {
+        "current_sensor_data": {
+            "soil_moisture_percent": latest_data.get("moisture"),
+            "temperature_celsius": latest_data.get("temperature"),
+            "humidity_percent": latest_data.get("humidity"),
+            "pump_status": latest_data.get("pump")
+        },
+        "latest_disease_result": (
+            {"disease": latest_scan[0], "confidence": latest_scan[1]}
+            if latest_scan else None
+        )
+    }
+    prompt = (
+        f"Selected response language: {'Kannada' if language == 'kn' else 'English'}.\n"
+        f"Verified AgroVision context (use only these values; do not invent replacements): {context}\n"
+        f"Farmer question: {message.strip()}"
+    )
+
+    try:
+        client = genai.Client(api_key=api_key)
+        response = client.models.generate_content(
+            model=os.environ.get("GEMINI_MODEL", "gemini-3.6-flash"),
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=CHATBOT_SYSTEM_PROMPT,
+                temperature=0.4
+            )
+        )
+        answer = (response.text or "").strip()
+        if not answer:
+            raise RuntimeError("Empty response from AI provider")
+        conn.execute(
+            "INSERT INTO chat_messages (conversation_id, role, message, language) VALUES (?, 'user', ?, ?)",
+            (conversation_id, message.strip(), language)
+        )
+        conn.execute(
+            "INSERT INTO chat_messages (conversation_id, role, message, language) VALUES (?, 'assistant', ?, ?)",
+            (conversation_id, answer, language)
+        )
+        conn.execute(
+            """DELETE FROM chat_messages WHERE conversation_id = ? AND id NOT IN
+               (SELECT id FROM chat_messages WHERE conversation_id = ? ORDER BY id DESC LIMIT 100)""",
+            (conversation_id, conversation_id)
+        )
+        conn.commit()
+        return jsonify({"response": answer})
+    except Exception as error:
+        app.logger.warning("AI chatbot request failed: %s", error)
+        fallback = (
+            "ಕ್ಷಮಿಸಿ, ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+            if language == "kn" else
+            "Sorry, I couldn't process that question. Please try again."
+        )
+        return jsonify({"error": True, "message": fallback}), 502
 
 # =========================
 # SENSOR HISTORY

@@ -5,3 +5,5 @@ pandas
 scikit-learn
 joblib
 pillow
+python-dotenv
+google-genai
