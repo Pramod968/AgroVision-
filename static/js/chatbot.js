@@ -1,6 +1,8 @@
 (() => {
   let messages = [];
   let waiting = false;
+  let recognition = null;
+  let listening = false;
   const conversationId = (() => {
     const key = 'agrovision-chat-conversation';
     let value = localStorage.getItem(key);
@@ -78,6 +80,90 @@
     if (open) { showWelcome(); byId('chatbotInput').focus(); }
   }
 
+  function renderHistory() {
+    const list = byId('chatbotHistoryList');
+    if (!list) return;
+    list.replaceChildren();
+    if (!messages.length) {
+      const empty = document.createElement('div');
+      empty.className = 'chatbot-history-empty';
+      empty.textContent = text('chatbotHistoryEmpty');
+      list.appendChild(empty);
+      return;
+    }
+    messages.forEach(message => {
+      const item = document.createElement('article');
+      item.className = `chatbot-history-item ${message.role}`;
+      const label = document.createElement('span');
+      label.className = 'chatbot-history-role';
+      label.textContent = message.role === 'user' ? text('chatbotYou') : text('chatbotTitle');
+      const content = document.createElement('p');
+      content.textContent = message.content;
+      item.append(label, content);
+      list.appendChild(item);
+    });
+  }
+
+  function toggleHistory(show) {
+    const panel = byId('chatbotHistoryView');
+    const button = byId('chatbotHistory');
+    if (!panel || !button) return;
+    panel.classList.toggle('open', show);
+    panel.setAttribute('aria-hidden', String(!show));
+    button.setAttribute('aria-expanded', String(show));
+    if (show) renderHistory();
+  }
+
+  function setListening(active) {
+    listening = active;
+    const mic = byId('chatbotMic');
+    if (!mic) return;
+    mic.classList.toggle('listening', active);
+    mic.setAttribute('aria-pressed', String(active));
+    mic.title = active ? text('listening') : text('microphone');
+    mic.setAttribute('aria-label', active ? text('listening') : text('microphone'));
+  }
+
+  function showSpeechMessage(key) {
+    addMessage('assistant', text(key), true);
+  }
+
+  function toggleSpeechRecognition() {
+    if (listening) {
+      recognition.stop();
+      return;
+    }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      showSpeechMessage('speechNotSupported');
+      return;
+    }
+    recognition = new SpeechRecognition();
+    recognition.lang = language() === 'kn' ? 'kn-IN' : 'en-IN';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.onstart = () => setListening(true);
+    recognition.onresult = event => {
+      let transcript = '';
+      for (let index = event.resultIndex; index < event.results.length; index += 1) {
+        transcript += event.results[index][0].transcript;
+      }
+      byId('chatbotInput').value = transcript;
+    };
+    recognition.onerror = event => {
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') showSpeechMessage('microphonePermissionDenied');
+      else if (event.error === 'no-speech') showSpeechMessage('speechNotRecognized');
+      else if (event.error !== 'aborted') showSpeechMessage('microphoneError');
+    };
+    recognition.onend = () => setListening(false);
+    try {
+      recognition.start();
+    } catch (error) {
+      setListening(false);
+      showSpeechMessage('microphoneError');
+    }
+  }
+
   function context() {
     const value = id => byId(id)?.textContent?.trim() || null;
     return {
@@ -112,6 +198,7 @@
       indicator.remove();
       if (!response.ok || data.error) throw new Error(data.message || text('chatbotError'));
       addMessage('assistant', data.response);
+      renderHistory();
     } catch (error) {
       indicator.remove();
       addMessage('assistant', error.message || text('chatbotError'), true);
@@ -126,8 +213,24 @@
     document.querySelectorAll('#chatbotPanel [data-i18n]').forEach(element => {
       element.textContent = text(element.dataset.i18n);
     });
+    const historyButton = byId('chatbotHistory');
+    if (historyButton) {
+      historyButton.title = text('chatbotHistory');
+      historyButton.setAttribute('aria-label', text('chatbotHistory'));
+    }
+    const historyBack = byId('chatbotHistoryBack');
+    if (historyBack) {
+      historyBack.title = text('chatbotBack');
+      historyBack.setAttribute('aria-label', text('chatbotBack'));
+    }
+    if (byId('chatbotHistoryView')?.classList.contains('open')) renderHistory();
     const input = byId('chatbotInput');
     input.placeholder = text('chatbotPlaceholder');
+    const mic = byId('chatbotMic');
+    if (mic) {
+      mic.title = listening ? text('listening') : text('microphone');
+      mic.setAttribute('aria-label', listening ? text('listening') : text('microphone'));
+    }
     if (messages.length === 1 && messages[0].role === 'assistant') {
       const welcomeBody = byId('chatbotMessages').querySelector('.chatbot-message-body');
       if (welcomeBody) welcomeBody.textContent = text('chatbotWelcome');
@@ -157,13 +260,17 @@
       messages = [];
       byId('chatbotMessages').replaceChildren();
       showWelcome();
+      renderHistory();
     });
     byId('chatbotSend').addEventListener('click', send);
+    byId('chatbotHistory').addEventListener('click', () => toggleHistory(true));
+    byId('chatbotHistoryBack').addEventListener('click', () => toggleHistory(false));
+    byId('chatbotMic').addEventListener('click', toggleSpeechRecognition);
     byId('chatbotInput').addEventListener('keydown', event => {
       if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); send(); }
     });
     refreshLanguage();
-    loadHistory().then(() => { if (!messages.length) showWelcome(); });
+    loadHistory().then(() => { if (!messages.length) showWelcome(); renderHistory(); });
   });
 
   window.refreshChatbotLanguage = refreshLanguage;
